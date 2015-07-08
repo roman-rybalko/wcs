@@ -10,18 +10,40 @@ class User implements \WebConstructionSet\Database\User {
 	}
 
 	public function create($login, $password) {
-		$this->db->insert('users', ['login' => $login, 'passhash' => password_hash($password, PASSWORD_DEFAULT)]);
+		$id = null;
+		if ($this->db->insert('users', ['login' => $login, 'passhash' => password_hash($password, PASSWORD_DEFAULT)])) {
+			$data = $this->db->select('users', ['id'], ['login' => $login]);
+			if ($data)
+				$id = $data[0]['id'];
+		}
+		return $id;
 	}
 
 	public function check($login, $password) {
-		$data = $this->db->select('users', ['passhash'], ['login' => $login]);
-		if ($data)
-			return password_verify($password, $data[0]['passhash']);
-		return false;
+		$id = null;
+		$data = $this->db->select('users', ['passhash', 'id'], ['login' => $login]);
+		if ($data && password_verify($password, $data[0]['passhash']))
+			$id = $data[0]['id'];
+		return $id;
 	}
 
-	public function delete($login) {
-		$this->db->delete('users', ['login' => $login]);
+	public function getId($login) {
+		$data = $this->db->select('users', ['id'], ['login' => $login]);
+		if ($data)
+			return $data[0]['id'];
+		return null;
+	}
+
+	public function delete($id) {
+		return $this->db->delete('users', ['id' => $id]);
+	}
+
+	public function rename($id, $newLogin) {
+		return $this->db->update('users', ['login' => $newLogin], ['id' => $id]);
+	}
+
+	public function password($id, $newPassword) {
+		return $this->db->update('users', ['passhash' => password_hash($newPassword, PASSWORD_DEFAULT)], ['id' => $id]);
 	}
 }
 

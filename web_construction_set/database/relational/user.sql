@@ -1,1 +1,2 @@
-create table users (login varchar primary key, passhash varchar);
+create table users (login varchar, passhash varchar, id integer primary key autoincrement);
+create unique index users_idx on users (login);
