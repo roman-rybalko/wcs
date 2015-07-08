@@ -21,11 +21,19 @@ class User {
 	}
 
 	/**
-	 * Получить логин текущего пользователя
+	 * Получить идентификатор текущего пользователя
 	 * @return integer
 	 */
 	public function getId() {
 		return $this->getSessionValue('id');
+	}
+	
+	/**
+	 * Получить логин текущего пользователя
+	 * @return string
+	 */
+	public function getLogin() {
+		return $this->getSessionValue('login');
 	}
 
 	/**
@@ -38,6 +46,7 @@ class User {
 		$id = $this->db->create($login, $password);
 		if ($id) {
 			$this->setSessionValue('id', $id);
+			$this->setSessionValue('login', $login);
 			return true;
 		}
 		return false;
@@ -53,9 +62,11 @@ class User {
 		$id = $this->db->check($login, $password);
 		if ($id) {
 			$this->setSessionValue('id', $id);
+			$this->setSessionValue('login', $login);
 			return true;
 		} else {
 			$this->setSessionValue('id', null);
+			$this->setSessionValue('login', null);
 			return false;
 		}
 	}
@@ -65,6 +76,7 @@ class User {
 	 */
 	public function logout() {
 		$this->setSessionValue('id', null);
+		$this->setSessionValue('login', null);
 	}
 
 	/**
@@ -78,6 +90,7 @@ class User {
 			if ($id) {
 				$this->db->delete($this->getSessionValue('id'));
 				$this->setSessionValue('id', null);
+				$this->setSessionValue('login', null);
 				return true;
 			}
 			return false;
