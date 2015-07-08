@@ -35,8 +35,9 @@ class database {
 			$query .= ' WHERE ' . implode ( ' AND ', array_map ( function ($val) {
 				return $val . ' = ?';
 			}, array_keys ( $where ) ) );
+		$values = array_merge(array_values($what), array_values($where));
 		$stm = $this->pdo->prepare ( $query );
-		$stm->execute ( array_values ( $what ) + array_values ( $where ) );
+		$stm->execute ( $values );
 		return true;
 	}
 
