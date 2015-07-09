@@ -23,6 +23,9 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 ## ContentModifier\JQuery
 Генерирует noConflict-объект jQuery заданной версии.
 
+## ContentModifier\Xslt, ContentModifier\Xslt\OutputBufferHandler
+Обработчик XSLT-шаблонов.
+
 ## CampaignString
 Компоненты, которые извлекают строку рекламной кампании при переходе из поисковой системы.
 
@@ -31,3 +34,19 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 
 ## Database\Relational
 Интерфейс к реляционной БД.
+
+## Database\Relational\PrefixWrapper
+Адаптер для замены имен таблиц и полей.
+
+## Database\Relational\SimpleAdapter
+адаптер для произвольного класса с аналогичным интерфейсом, обрабатывает исключения.
+
+## Accounting\User, Database\User, Database\Relational\User
+Управление пользователями: проверка пароля.
+
+## Database\KeyValue, Database\Relational\KeyValue
+БД ключ-значение (map).
+
+## Url\Tools
+Утилиты для работы с URL.
+getMyUrl - надежно получить URL выполняемого скрипта.
