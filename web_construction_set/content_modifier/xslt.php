@@ -29,43 +29,35 @@ class Xslt {
 
 		$xml = new \DOMDocument();
 		if (!$xml->loadXML($data)) {
-			error_log('Document parse failed. ' . $errorHandler->getErrorString());
+			error_log(__FILE__ . ':' . __LINE__ . ': Document parse failed. ' . $errorHandler->getErrorString());
 			return null;
 		}
 
 		$xslPath = $this->getXslStylesheetPath($xml);
 		if (!$xslPath) {
-			error_log('XSL stylesheet path is not found. ' . $errorHandler->getErrorString());
+			error_log(__FILE__ . ':' . __LINE__ . ': XSL stylesheet path is not found. ' . $errorHandler->getErrorString());
 			return null;
 		}
 
 		$xsl = new \DOMDocument();
 		if (!$xsl->load($xslPath)) {
-			error_log('XSL stylesheet load/parse failed. ' . $errorHandler->getErrorString());
+			error_log(__FILE__ . ':' . __LINE__ . ': XSL stylesheet load/parse failed. ' . $errorHandler->getErrorString());
 			return null;
 		}
 
 		$xslt = new \XSLTProcessor();
 		if (!$xslt->importStylesheet($xsl)) {
-			error_log('Import XSL stylesheet failed. ' . $errorHandler->getErrorString());
+			error_log(__FILE__ . ':' . __LINE__ . ': Import XSL stylesheet failed. ' . $errorHandler->getErrorString());
 			return null;
 		}
 
 		$result = $xslt->transformToXml($xml);
 		if (!$result) {
-			error_log('XSL Transform failed.' . $errorHandler->getErrorString());
+			error_log(__FILE__ . ':' . __LINE__ . ': XSL Transform failed.' . $errorHandler->getErrorString());
 			return null;
 		}
 
 		return $result;
-	}
-
-	private function display($node, $depth) {
-		if (!$node)
-			return;
-		echo 'depth: ' . $depth . ', line: ' . $node->getLineNo() . ', path: ' . $node->getNodePath() . ', class: ' . get_class($node) . "\n";
-		$this->display($node->firstChild, $depth + 1);
-		$this->display($node->nextSibling, $depth);
 	}
 
 	private function getXslStylesheetPath($node) {
