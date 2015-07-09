@@ -3,18 +3,18 @@
 namespace WebConstructionSet\Database\Relational;
 
 class SimpleAdapter implements \WebConstructionSet\Database\Relational {
-	private $db, $errors;
+	private $db, $debug;
 
-	public function __construct($db, $errors = false) {
+	public function __construct($db, $debug = false) {
 		$this->db = $db;
-		$this->errors = $errors;
+		$this->debug = $debug;
 	}
 
 	public function select($tableName, $what = [], $where = [], $addSql = '') {
 		try {
 			return $this->db->select($tableName, $what, $where, $addSql);
 		} catch (\Exception $e) {
-			if ($this->errors)
+			if ($this->debug)
 				error_log($e->getMessage());
 			return null;
 		}
@@ -25,7 +25,7 @@ class SimpleAdapter implements \WebConstructionSet\Database\Relational {
 			$this->db->update($tableName, $what, $where);
 			return 1;
 		} catch (\Exception $e) {
-			if ($this->errors)
+			if ($this->debug)
 				error_log($e->getMessage());
 			return 0;
 		}
@@ -36,7 +36,7 @@ class SimpleAdapter implements \WebConstructionSet\Database\Relational {
 			$this->db->insert($tableName, $what);
 			return true;
 		} catch (\Exception $e) {
-			if ($this->errors)
+			if ($this->debug)
 				error_log($e->getMessage());
 			return false;
 		}
@@ -47,7 +47,7 @@ class SimpleAdapter implements \WebConstructionSet\Database\Relational {
 			$this->db->delete($tableName, $where);
 			return 1;
 		} catch (\Exception $e) {
-			if ($this->errors)
+			if ($this->debug)
 				error_log($e->getMessage());
 			return 0;
 		}
