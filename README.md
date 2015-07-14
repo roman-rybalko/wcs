@@ -22,8 +22,8 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 ## ContentModifier\JQuery
 Генерирует noConflict-объект jQuery заданной версии.
 
-## ContentModifier\Xslt, ContentModifier\Xslt\OutputBufferHandler
-Обработчик XSLT-шаблонов.
+## ContentModifier\Xslt, OutputBuffer\Xslt
+Обработчик XSLT.
 
 ## CampaignString
 Компоненты, которые извлекают строку рекламной кампании при переходе из поисковой системы.
@@ -48,4 +48,9 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 
 ## Url\Tools
 Утилиты для работы с URL.
-getMyUrl - надежно получить URL выполняемого скрипта.
+
+## Xml\LibxmlErrorHandler
+Собирает ошибки libxml (libxml_use_internal_errors).
+
+## OutputBuffer\XmlFormatter
+Форматирует вывод XML (tidy).

@@ -1,17 +1,17 @@
 <?php
 
-namespace WebConstructionSet\ContentModifier\Xslt;
+namespace WebConstructionSet\OutputBuffer;
 
 /**
- * Обработка XSLT используя PHP Output Buffering (ob_start)
+ * Обработка XSLT
  */
-class OutputBufferHandler {
+class Xslt {
 	public static function init() {
 		if (!ob_start(function($buffer){
 			$xslt = new \WebConstructionSet\ContentModifier\Xslt(dirname($_SERVER['SCRIPT_FILENAME']) . '/');
 			return $xslt->process($buffer);
 		}))
-			throw \ErrorException("ob_start failed");
+			throw \ErrorException("ob_start failed", null, null, __FILE__, __LINE__);
 	}
 }
 

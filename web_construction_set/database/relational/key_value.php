@@ -23,6 +23,13 @@ class KeyValue implements \WebConstructionSet\Database\KeyValue {
 		return null;
 	}
 
+	public function getValues($key) {
+		$data = $this->db->select($this->tableName, [$this->valueFieldName], [$this->keyFieldName => $key]);
+		if ($data)
+			return array_map(function($val){return array_values($val)[0];}, $data);
+		return null;
+	}
+
 	public function getKey($value) {
 		$data = $this->db->select($this->tableName, [$this->keyFieldName], [$this->valueFieldName => $value]);
 		if ($data)

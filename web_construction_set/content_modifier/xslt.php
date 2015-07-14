@@ -25,7 +25,7 @@ class Xslt {
 	 * @return NULL|string XML/XHTML или null при ошибке
 	 */
 	public function process($data) {
-		$errorHandler = new \WebConstructionSet\ContentModifier\Xslt\LibxmlErrorHandler();
+		$errorHandler = new \WebConstructionSet\Xml\LibxmlErrorHandler();
 
 		$xml = new \DOMDocument();
 		if (!$xml->loadXML($data)) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace WebConstructionSet\ContentModifier\Xslt;
+namespace WebConstructionSet\Xml;
 
 /**
  * Включает/выключает обработку ошибок libxml.
