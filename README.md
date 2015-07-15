@@ -22,7 +22,7 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 ## ContentModifier\JQuery
 Генерирует noConflict-объект jQuery заданной версии.
 
-## ContentModifier\Xslt, OutputBuffer\Xslt
+## ContentModifier\Xslt, OutputBuffer\XsltHtml
 Обработчик XSLT.
 
 ## CampaignString

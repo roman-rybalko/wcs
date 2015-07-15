@@ -9,7 +9,7 @@ namespace WebConstructionSet\ContentModifier;
  * Пишет в лог развернутые сообщения об ошибках.
  */
 class Xslt {
-	private $baseUri;
+	private $baseUri, $xslString, $resultDoc;
 
 	/**
 	 * Коснтруктор объекта.
@@ -18,46 +18,65 @@ class Xslt {
 	public function __construct($baseUri = '') {
 		$this->baseUri = $baseUri;
 	}
+	
+	/**
+	 * Переопределить XSL-шаблон (строка XML).
+	 * Шаблон из XML использоваться не будет.
+	 * @param string $data XML-string
+	 */
+	public function setXsl($data) {
+		$this->xslString = $data;
+	}
 
 	/**
 	 * Обрабатывает данные.
-	 * @param string $data XML-ка
-	 * @return NULL|string XML/XHTML или null при ошибке
+	 * @param string $data XML-строка
 	 */
 	public function process($data) {
 		$errorHandler = new \WebConstructionSet\Xml\LibxmlErrorHandler();
 
 		$xml = new \DOMDocument();
-		if (!$xml->loadXML($data)) {
-			error_log(__FILE__ . ':' . __LINE__ . ': Document parse failed. ' . $errorHandler->getErrorString());
-			return null;
-		}
-
-		$xslPath = $this->getXslStylesheetPath($xml);
-		if (!$xslPath) {
-			error_log(__FILE__ . ':' . __LINE__ . ': XSL stylesheet path is not found. ' . $errorHandler->getErrorString());
-			return null;
-		}
+		if (!$xml->loadXML($data))
+			throw new \ErrorException('Document parse failed. ' . $errorHandler->getErrorString(), null, null, __FILE__, __LINE__);
 
 		$xsl = new \DOMDocument();
-		if (!$xsl->load($xslPath)) {
-			error_log(__FILE__ . ':' . __LINE__ . ': XSL stylesheet load/parse failed. ' . $errorHandler->getErrorString());
-			return null;
+		if ($this->xslString) {
+			if (!$xsl->loadXML($this->xslString))
+				throw new \ErrorException('XSL stylesheet load/parse failed. ' . $errorHandler->getErrorString(), null, null, __FILE__, __LINE__);
+		} else {
+			$xslPath = $this->getXslStylesheetPath($xml);
+			if (!$xslPath)
+				throw new \ErrorException('XSL stylesheet path is not found.', null, null, __FILE__, __LINE__);
+
+			if (!$xsl->load($xslPath))
+				throw new \ErrorException('XSL stylesheet load/parse failed. ' . $errorHandler->getErrorString(), null, null, __FILE__, __LINE__);
 		}
 
 		$xslt = new \XSLTProcessor();
-		if (!$xslt->importStylesheet($xsl)) {
-			error_log(__FILE__ . ':' . __LINE__ . ': Import XSL stylesheet failed. ' . $errorHandler->getErrorString());
-			return null;
-		}
+		if (!$xslt->importStylesheet($xsl))
+			throw new \ErrorException('Import XSL stylesheet failed. ' . $errorHandler->getErrorString(), null, null, __FILE__, __LINE__);
 
-		$result = $xslt->transformToXml($xml);
-		if (!$result) {
-			error_log(__FILE__ . ':' . __LINE__ . ': XSL Transform failed.' . $errorHandler->getErrorString());
-			return null;
-		}
-
-		return $result;
+		$this->resultDoc = $xslt->transformToDoc($xml);
+		if (!$this->resultDoc)
+			throw new \ErrorException('XSLT transform failed. ' . $errorHandler->getErrorString(), null, null, __FILE__, __LINE__);
+		
+		// no return
+	}
+	
+	/**
+	 * Польчить результат в виде XML
+	 * @return string XML-строка
+	 */
+	public function getXml() {
+		return $this->resultDoc->saveXML();
+	}
+	
+	/**
+	 * Получить результат в виде HTML
+	 * @return string HTML-строка
+	 */
+	public function getHtml() {
+		return $this->resultDoc->saveHTML();
 	}
 
 	private function getXslStylesheetPath($node) {
