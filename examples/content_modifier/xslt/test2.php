@@ -1,10 +1,10 @@
 <?php
 
-require_once 'autoload.php';
+require_once 'web_construction_set/autoload.php';
 
 $data = file_get_contents('test.xml');
 
-\WebConstructionSet\ContentModifier\Xslt\OutputBufferHandler::init();
+\WebConstructionSet\OutputBuffer\XsltHtml::init();
 
 echo $data;
 

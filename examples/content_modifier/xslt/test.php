@@ -1,10 +1,11 @@
 <?php
 
-require_once 'autoload.php';
+require_once 'web_construction_set/autoload.php';
 
 $data = file_get_contents('test.xml');
 
 $xslt = new \WebConstructionSet\ContentModifier\Xslt();
-echo $xslt->process($data);
+$xslt->process($data);
+echo $xslt->getHtml();
 
 ?>

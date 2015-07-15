@@ -1,6 +1,6 @@
 <?php
 
-require_once 'autoload.php';
+require_once 'web_construction_set/autoload.php';
 
 $appData = ['client_id' => \Config::CLIENT_ID, 'client_secret' => \Config::CLIENT_SECRET];
 

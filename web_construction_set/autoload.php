@@ -5,7 +5,7 @@
  * Путь к файлу: Path\NameSpace\ClassName -> path/name_space/class_name.php
  * @param string $classname
  */
-function __autoload($classname) {
+spl_autoload_register(function($classname) {
 	$names = explode('\\', $classname);
 	foreach ($names as &$name) {
 		$new_name = strtolower($name[0]);
@@ -16,7 +16,9 @@ function __autoload($classname) {
 		}
 		$name = $new_name;
 	}
-	require_once implode('/', $names) . '.php';
-}
+	$filename = implode('/', $names) . '.php';
+	if (file_exists($filename))
+		require_once($filename);
+});
 
 ?>
