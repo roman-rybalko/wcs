@@ -25,10 +25,10 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 ## ContentModifier\Xslt, OutputBuffer\XsltHtml
 Обработчик XSLT.
 
-## CampaignString
+## Marketig\CampaignString
 Компоненты, которые извлекают строку рекламной кампании при переходе из поисковой системы.
 
-## CampaignStrings
+## Marketing\CampaignStrings
 Компоненты, которые извлекают строки рекламных кампаний из настроек Yandex.Direct, Google AdWords и др. источников.
 
 ## Database\Relational

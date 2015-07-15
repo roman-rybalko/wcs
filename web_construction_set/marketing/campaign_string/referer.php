@@ -1,8 +1,8 @@
 <?php
 
-namespace WebConstructionSet\CampaignString;
+namespace WebConstructionSet\Marketing\CampaignString;
 
-class Referer implements \WebConstructionSet\CampaignString {
+class Referer implements \WebConstructionSet\Marketing\CampaignString {
 	public function get() {
 		$req_headers = getallheaders();
 		$hdr_name = 'Referer';
