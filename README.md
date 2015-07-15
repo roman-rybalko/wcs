@@ -54,3 +54,9 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 
 ## OutputBuffer\XmlFormatter
 Форматирует вывод XML (tidy).
+
+## Accounting\OAuth
+Интерфейс к реализациям OAuth.
+
+## Accounting\OAuth\Yandex
+Реализация OAuth Яндекс.
