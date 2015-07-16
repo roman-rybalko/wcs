@@ -1,6 +1,6 @@
 <?php
 
-namespace WebConstructionSet\Marketing;
+namespace WebConstructionSet\Advertising;
 
 /**
  * Получить строку рекламной кампании, по которой к нам пришли (из GET-параметров utm_*, из Referrer)

@@ -1,6 +1,6 @@
 <?php
 
-namespace WebConstructionSet\Marketing;
+namespace WebConstructionSet\Advertising;
 
 /**
  * Выдрать строки рекламной кампании откуда-нибудь (Yandex, Google, Excel, txt - в зависимости от реализации)
