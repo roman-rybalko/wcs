@@ -17,8 +17,14 @@ spl_autoload_register(function($classname) {
 		$name = $new_name;
 	}
 	$filename = implode('/', $names) . '.php';
-	if (file_exists($filename))
-		require_once($filename);
+	// пробуем загрузить по абсолютному пути (наши классы), затем по относительному (пользовательские классы)
+	if (file_exists(dirname(__FILE__) . '/../' . $filename)) {  // пробуем загрузить если autoload.php лежит рядом с нашими классами
+		require_once dirname(__FILE__) . '/../' . $filename;
+	} else if (file_exists(dirname(__FILE__) . '/' . $filename)) {  // пробуем загрузить если autoload.php лежит в корне
+		require_once dirname(__FILE__) . '/' . $filename;
+	} else if (file_exists($filename)) {  // пробуем загрузить по относительному пути
+		require_once $filename;
+	}
 });
 
 ?>
