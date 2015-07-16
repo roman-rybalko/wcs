@@ -8,19 +8,11 @@ namespace WebConstructionSet\Accounting;
 interface OAuth {
 
 	/**
-	 * Отправить запрос на сервер для получения доступа к данным пользователя.
-	 * @param string $userId Идентификатор пользователя.
-	 * @return string URL-адрес, куда нужно перенаправить пользоваеля.
+	 * Обработка транзакции OAuth.
+	 * Может выдать header() и перенаправить пользователя на другую страницу.
+	 * @return boolean true - данные готовы (получен token или ошибка), false - еще в процессе
 	 */
-	public function request($userId);
-
-	/**
-	 * Обработать ответ сервера.
-	 * При успешной авторизации (пользователь разрешил доступ) сервер OAuth
-	 * перенаправляет пользователя на наш callback-url, из которого нужно вызвать этот метод.
-	 * @return string userId, переданный в reauest().
-	 */
-	public function handleResponse();
+	public function process();
 
 	/**
 	 * Получить ключ-пароль (token).

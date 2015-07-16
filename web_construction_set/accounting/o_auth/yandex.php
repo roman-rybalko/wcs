@@ -23,17 +23,22 @@ class Yandex implements \WebConstructionSet\Accounting\OAuth {
 			session_start();
 	}
 
-	public function request($userId) {
-		$_SESSION['OAuth_Yandex'] = $userId;
-		return 'https://oauth.yandex.ru/authorize?response_type=code&client_id=' . $this->appData['client_id'];
+	public function process() {
+		if (isset($_SESSION['OAuth_Yandex'])) {
+			unset($_SESSION['OAuth_Yandex']);
+			$this->handleResponse();
+			return true;
+		}
+		$_SESSION['OAuth_Yandex'] = 1;
+		$this->request();
+		return false;
 	}
 
-	public function handleResponse() {
-		if (empty($_SESSION['OAuth_Yandex']))
-			return null;
-		$userId = $_SESSION['OAuth_Yandex'];
-		unset($_SESSION['OAuth_Yandex']);
+	private function request() {
+		header('Location: https://oauth.yandex.ru/authorize?response_type=code&client_id=' . $this->appData['client_id']);
+	}
 
+	private function handleResponse() {
 		if (isset($_GET['code'])) {
 			$code = $_GET['code'];
 			$url = 'https://oauth.yandex.ru/token';
@@ -54,8 +59,6 @@ class Yandex implements \WebConstructionSet\Accounting\OAuth {
 		}
 		if (isset($_GET['error']))
 			$this->error = $_GET['error'] . ': ' . $_GET['error_description'];
-
-		return $userId;
 	}
 
 	public function getToken() {
