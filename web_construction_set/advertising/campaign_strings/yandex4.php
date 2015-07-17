@@ -43,7 +43,7 @@ class Yandex4 implements \WebConstructionSet\Advertising\CampaignStrings {
 		$campIds = $this->getCampIds();
 		for ($i = 0; $i < count($campIds); $i += 10) {
 			$data = $this->request(['method' => 'GetBanners', 'param' => ['CampaignIDS' => array_slice($campIds, $i, 10), 'GetPhrases' => 'Yes']]);
-			foreach ($data as $banner) {
+			foreach ($data['data'] as $banner) {
 				foreach ($banner['Phrases'] as $phrase) {
 					$strings[] = $phrase['Phrase'];
 				}
