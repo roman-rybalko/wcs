@@ -6,6 +6,7 @@ namespace WebConstructionSet\Database;
  * Интерфейс к реляционной БД.
  * $what - ['поле' => значение, ...]
  * $where - ['поле' => значение, ...]
+ * @author Жерносек Станислав Александрович <sz@lp2b.pro>
  */
 interface Relational {
 	/**
