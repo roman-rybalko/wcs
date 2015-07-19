@@ -86,10 +86,10 @@ class OAuth2 implements \WebConstructionSet\Accounting\OAuth {
 	}
 
 	protected function handleResponse() {
+		if (isset($_GET['state']))
+			$this->state = $_GET['state'];
 		if (isset($_GET['code'])) {
 			$code = $_GET['code'];
-			if (isset($_GET['state']))
-				$this->state = $_GET['state'];
 			$data = [
 					'grant_type' => 'authorization_code',
 					'code' => $code,

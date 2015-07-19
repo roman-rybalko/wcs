@@ -6,10 +6,10 @@ namespace WebConstructionSet\Advertising\CampaignStrings;
  * Обращение к Яндекс.Директ по API v4
  */
 class Yandex4 implements \WebConstructionSet\Advertising\CampaignStrings {
-	private $auth, $url;
+	private $token, $url;
 
-	public function __construct(\WebConstructionSet\Accounting\OAuth $auth, $sandbox = true) {
-		$this->auth = $auth;
+	public function __construct($token, $sandbox = true) {
+		$this->token = $token;
 		if ($sandbox)
 			$this->url = 'https://api-sandbox.direct.yandex.ru/v4/json/';
 		else
@@ -17,17 +17,11 @@ class Yandex4 implements \WebConstructionSet\Advertising\CampaignStrings {
 	}
 
 	public function get() {
-		if ($this->auth->process()) {
-			$error = $this->auth->getError();
-			if ($error)
-				throw new \ErrorException('OAuth error: ' . $error, null, null, __FILE__, __LINE__);
-			return $this->getStrings();
-		}
-		return null;
+		return $this->getStrings();
 	}
 
 	private function request($data) {
-		$data['token'] = $this->auth->getToken();
+		$data['token'] = $this->token;
 		$json = json_encode($data);
 		$options = ['http' => ['header' => "Content-type: text/plain; charset=UTF-8\r\n", 'method' => 'POST', 'content' => $json]];
 		$context = stream_context_create($options);

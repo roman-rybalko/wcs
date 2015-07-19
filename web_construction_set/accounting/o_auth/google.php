@@ -4,6 +4,7 @@ namespace WebConstructionSet\Accounting\OAuth;
 
 /**
  * Google OAuth (2.0)
+ * Возвращает Access Token
  */
 class Google extends \WebConstructionSet\Accounting\OAuth\OAuth2 {
 	public function __construct($authData) {
