@@ -7,15 +7,15 @@ namespace WebConstructionSet\Database\Relational;
  * @author Жерносек Станислав Александрович <sz@lp2b.pro>
  * @author Роман Рыбалко <devel@romanr.info>
  */
-class Pdo {
+class Pdo implements \WebConstructionSet\Database\Relational {
 	private $pdo;
 
 	public function __construct($dsn, $user = null, $pass = null) {
 		$opt = [
-				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-				PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+				\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+				\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
 		];
-		$this->pdo = new PDO($dsn, $user, $pass, $opt);
+		$this->pdo = new \PDO($dsn, $user, $pass, $opt);
 	}
 
 	public function select($tableName, $what = [], $where = [], $addSql = '') {
@@ -46,7 +46,7 @@ class Pdo {
 		$values = array_merge(array_values($what), array_values($where));
 		$stm = $this->pdo->prepare($query);
 		$stm->execute($values);
-		return true;
+		return $this->pdo->query('SELECT ROW_COUNT() AS count')->fetchAll()[0]['count'];
 	}
 
 	public function insert($tableName, $what) {
@@ -55,7 +55,7 @@ class Pdo {
 		}, $what)) . ')';
 		$stm = $this->pdo->prepare($query);
 		$stm->execute(array_values($what));
-		return true;
+		return $this->pdo->query('SELECT LAST_INSERT_ID() AS id')->fetchAll()[0]['id'];
 	}
 
 	public function delete($tableName, $where) {
@@ -64,5 +64,6 @@ class Pdo {
 		}, array_keys($where)));
 		$stm = $this->pdo->prepare($query);
 		$stm->execute(array_values($where));
+		return $this->pdo->query('SELECT ROW_COUNT() AS count')->fetchAll()[0]['count'];
 	}
 }

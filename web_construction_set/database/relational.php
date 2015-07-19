@@ -32,7 +32,7 @@ interface Relational {
 	 * INSERT
 	 * @param string $tableName
 	 * @param array[string => string] $what
-	 * @return boolean
+	 * @return integer Индекс вставленной записи (поле auto_increment)
 	 */
 	public function insert($tableName, $what);
 
@@ -40,7 +40,7 @@ interface Relational {
 	 * DELETE
 	 * @param string $tableName
 	 * @param array[string => string] $where
-	 * @return integer Количество обновленных строк
+	 * @return integer Количество удаленных строк
 	 */
 	public function delete($tableName, $where);
 }
