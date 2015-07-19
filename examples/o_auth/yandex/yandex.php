@@ -1,10 +1,7 @@
 <?php
-
-require_once 'web_construction_set/autoload.php';
-
+require_once '../../../web_construction_set/autoload.php';
 $appData = ['client_id' => \Config::CLIENT_ID, 'client_secret' => \Config::CLIENT_SECRET];
 $oauth = new \WebConstructionSet\Accounting\OAuth\Yandex($appData);
-
 if ($oauth->process()) {
 	$token = $oauth->getToken();
 	$error = $oauth->getError();

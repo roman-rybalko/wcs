@@ -4,21 +4,22 @@ namespace WebConstructionSet\Accounting\OAuth;
 
 /**
  * OAuth-авторизация Яндекса
+ * Возвращает Access Token
  */
 class Yandex implements \WebConstructionSet\Accounting\OAuth {
-	private $appData, $token, $error;
+	private $authData, $token, $error;
 
 	/**
 	 * Инициализация. Стартует сессию (session_start()).
-	 * @param array $appData ['client_id' => '0362dba002345324af343f25fe6c7366', 'client_secret' => '008e9a2216754a982940203741adbe5f']
+	 * @param array $authData ['client_id' => '0362dba002345324af343f25fe6c7366', 'client_secret' => '008e9a2216754a982940203741adbe5f']
 	 * @throws \ErrorException
 	 */
-	public function __construct($appData) {
-		if (empty($appData['client_id']))
+	public function __construct($authData) {
+		if (empty($authData['client_id']))
 			throw new \ErrorException('client_id is empty', null, null, __FILE__, __LINE__);
-		if (empty($appData['client_secret']))
+		if (empty($authData['client_secret']))
 			throw new \ErrorException('client_secret is empty', null, null, __FILE__, __LINE__);
-		$this->appData = $appData;
+		$this->authData = $authData;
 		if (session_status() != PHP_SESSION_ACTIVE)
 			session_start();
 	}
@@ -35,14 +36,14 @@ class Yandex implements \WebConstructionSet\Accounting\OAuth {
 	}
 
 	private function request() {
-		header('Location: https://oauth.yandex.ru/authorize?response_type=code&client_id=' . $this->appData['client_id']);
+		header('Location: https://oauth.yandex.ru/authorize?response_type=code&client_id=' . $this->authData['client_id']);
 	}
 
 	private function handleResponse() {
 		if (isset($_GET['code'])) {
 			$code = $_GET['code'];
 			$url = 'https://oauth.yandex.ru/token';
-			$data = ['grant_type' => 'authorization_code', 'code' => $code, 'client_id' => $this->appData['client_id'], 'client_secret' => $this->appData['client_secret']];
+			$data = ['grant_type' => 'authorization_code', 'code' => $code, 'client_id' => $this->authData['client_id'], 'client_secret' => $this->authData['client_secret']];
 			$options = ['http' => ['header' => "Content-type: application/x-www-form-urlencoded\r\n", 'method' => 'POST', 'content' => http_build_query($data)]];
 			$context = stream_context_create($options);
 			$result = file_get_contents($url, false /* use include path */, $context);

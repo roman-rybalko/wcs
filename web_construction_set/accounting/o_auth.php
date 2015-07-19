@@ -3,28 +3,26 @@
 namespace WebConstructionSet\Accounting;
 
 /**
- * Обработка OAuth
+ * Интерфейс OAuth
  */
 interface OAuth {
 
 	/**
-	 * Обработка транзакции OAuth.
-	 * Может выдать header() и перенаправить пользователя на другую страницу.
+	 * Обработка транзакции OAuth
+	 * Может выдать header()
 	 * @return boolean true - данные готовы (получен token или ошибка), false - еще в процессе
 	 */
 	public function process();
 
 	/**
-	 * Получить ключ-пароль (token).
-	 * Этот метод вызвать после handleResponse().
-	 * @return string Token или null.
+	 * Получить Token (тип Access/Refresh зависит от реализации)
+	 * @return string Token или null
 	 */
 	public function getToken();
 
 	/**
-	 * Получить описание ошибки.
-	 * Вызвать после handleResponse().
-	 * @return string код или описание
+	 * Получить описание ошибки
+	 * @return string тип и описание
 	 */
 	public function getError();
 }
