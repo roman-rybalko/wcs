@@ -117,5 +117,3 @@ class User {
 		return null;
 	}
 }
-
-?>

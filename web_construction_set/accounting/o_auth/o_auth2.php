@@ -128,5 +128,3 @@ class OAuth2 implements \WebConstructionSet\Accounting\OAuth {
 			$this->error .= ': ' . $_GET['error_description'];
 	}
 }
-
-?>

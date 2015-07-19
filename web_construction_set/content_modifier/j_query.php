@@ -30,5 +30,3 @@ class JQuery {
 		return $data;
 	}
 }
-
-?>

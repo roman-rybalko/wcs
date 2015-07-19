@@ -53,5 +53,3 @@ class SimpleAdapter implements \WebConstructionSet\Database\Relational {
 		}
 	}
 }
-
-?>

@@ -47,5 +47,3 @@ class Google implements \WebConstructionSet\Advertising\CampaignStrings {
 		return $strings;
 	}
 }
-
-?>

@@ -26,5 +26,3 @@ interface OAuth {
 	 */
 	public function getError();
 }
-
-?>

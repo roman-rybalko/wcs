@@ -12,4 +12,3 @@ Error: <?php echo $error; ?><br/>
 </body></html>
 <?php
 }
-?>

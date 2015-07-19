@@ -13,5 +13,3 @@ class AppendModifier implements Modifier {
 		return "append(\"$this->data\")";
 	}
 }
-
-?>

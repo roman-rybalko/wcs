@@ -31,4 +31,3 @@ if (empty($_GET['client_customer_id']) && empty($_GET['callback'])) {
 		}
 	}
 }
-?>

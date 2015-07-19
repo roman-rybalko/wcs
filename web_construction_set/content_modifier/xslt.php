@@ -94,5 +94,3 @@ class Xslt {
 		return null;
 	}
 }
-
-?>

@@ -11,5 +11,3 @@ class Yandex extends \WebConstructionSet\Accounting\OAuth\OAuth2 {
 		parent::__construct('https://oauth.yandex.ru/authorize', 'https://oauth.yandex.ru/token', $authData);
 	}
 }
-
-?>

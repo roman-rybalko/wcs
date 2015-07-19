@@ -28,5 +28,3 @@ class Tools {
 		return dirname(Tools::getMyUrlName()) . '/' . $scriptName;
 	}
 }
-
-?>

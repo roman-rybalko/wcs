@@ -13,5 +13,3 @@ class ReplaceModifier implements Modifier {
 		return "html(\"$this->data\")";
 	}
 }
-
-?>

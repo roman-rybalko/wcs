@@ -13,5 +13,3 @@ class ClassSelector implements Selector {
 		return $jq_obj_name . '(".' . $this->class_name .  '")';
 	}
 }
-
-?>

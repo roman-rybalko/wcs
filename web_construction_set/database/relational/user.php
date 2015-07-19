@@ -46,5 +46,3 @@ class User implements \WebConstructionSet\Database\User {
 		return $this->db->update('users', ['passhash' => password_hash($newPassword, PASSWORD_DEFAULT)], ['id' => $id]);
 	}
 }
-
-?>

@@ -9,5 +9,3 @@ class Utm implements \WebConstructionSet\Advertising\CampaignString {
 		return null;
 	}
 }
-
-?>

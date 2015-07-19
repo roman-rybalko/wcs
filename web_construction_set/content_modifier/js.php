@@ -41,5 +41,3 @@ class Js {
 		return $rules_data;
 	}
 }
-
-?>

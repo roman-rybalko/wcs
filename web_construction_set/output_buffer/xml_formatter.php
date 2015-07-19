@@ -14,5 +14,3 @@ class XmlFormatter {
 			throw \ErrorException("ob_start failed", null, null, __FILE__, __LINE__);
 	}
 }
-
-?>

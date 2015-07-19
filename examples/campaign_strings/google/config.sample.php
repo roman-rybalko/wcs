@@ -6,5 +6,3 @@ class Config {
 	const DEVELOPER_TOKEN = 'xxxxxxxxxxxxxxxxxxxxxx';
 	const COMPANY_NAME = 'Test';
 }
-
-?>

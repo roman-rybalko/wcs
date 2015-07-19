@@ -22,5 +22,3 @@ interface KeyValue {
 	 */
 	public function delete($key);
 }
-
-?>

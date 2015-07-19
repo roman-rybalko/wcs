@@ -39,5 +39,3 @@ class PrefixWrapper implements \WebConstructionSet\Database {
 		return $db->delete($this->tablePrefix . $tableName, $where);
 	}
 }
-
-?>

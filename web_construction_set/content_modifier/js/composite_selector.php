@@ -22,5 +22,3 @@ class CompositeSelector implements Selector {
 		return $js;
 	}
 }
-
-?>

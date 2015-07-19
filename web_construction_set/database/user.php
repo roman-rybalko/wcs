@@ -52,5 +52,3 @@ interface User {
 	 */
 	public function password($id, $newPassword);
 }
-
-?>

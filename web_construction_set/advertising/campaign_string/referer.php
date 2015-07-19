@@ -26,5 +26,3 @@ class Referer implements \WebConstructionSet\Advertising\CampaignString {
 		return urldecode($params[$param]);
 	}
 }
-
-?>

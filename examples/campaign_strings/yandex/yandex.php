@@ -10,4 +10,3 @@ if ($auth->process()) {
 		echo implode("\n", $strings->get());
 	}
 }
-?>

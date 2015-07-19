@@ -11,5 +11,3 @@ interface Selector {
 	 */
 	public function getJqSelector($jq_obj_name);
 }
-
-?>

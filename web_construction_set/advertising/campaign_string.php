@@ -12,5 +12,3 @@ interface CampaignString {
 	 */
 	public function get();
 }
-
-?>

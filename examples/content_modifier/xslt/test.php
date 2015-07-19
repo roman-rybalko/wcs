@@ -4,4 +4,3 @@ $data = file_get_contents('test.xml');
 $xslt = new \WebConstructionSet\ContentModifier\Xslt();
 $xslt->process($data);
 echo $xslt->getHtml();
-?>

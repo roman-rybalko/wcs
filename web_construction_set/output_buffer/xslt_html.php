@@ -15,5 +15,3 @@ class XsltHtml {
 			throw \ErrorException("ob_start failed", null, null, __FILE__, __LINE__);
 	}
 }
-
-?>

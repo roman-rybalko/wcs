@@ -44,5 +44,3 @@ interface Relational {
 	 */
 	public function delete($tableName, $where);
 }
-
-?>

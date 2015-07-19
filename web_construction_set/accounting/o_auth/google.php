@@ -11,5 +11,3 @@ class Google extends \WebConstructionSet\Accounting\OAuth\OAuth2 {
 		parent::__construct('https://accounts.google.com/o/oauth2/auth', 'https://accounts.google.com/o/oauth2/token', $authData);
 	}
 }
-
-?>

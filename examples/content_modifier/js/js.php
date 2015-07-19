@@ -47,5 +47,3 @@ $jq = new \WebConstructionSet\ContentModifier\JQuery();
 $jqObjName = 'jsTest';
 echo $jq->getJs($jqObjName);
 echo $js->getJs($jqObjName);
-
-?>

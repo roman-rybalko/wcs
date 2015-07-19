@@ -41,5 +41,3 @@ class KeyValue implements \WebConstructionSet\Database\KeyValue {
 		return $this->db->delete($this->tableName, [$this->keyFieldName => $key]);
 	}
 }
-
-?>

@@ -13,5 +13,3 @@ class IdSelector implements Selector {
 		return $jq_obj_name . '("#' . $this->id .  '")';
 	}
 }
-
-?>

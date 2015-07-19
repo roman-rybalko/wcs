@@ -5,5 +5,3 @@ class Config {
 	const CLIENT_SECRET = 'xxxxxxxxxxxxxxxxxxxxxxxx';
 	const SCOPE = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/adwords';
 }
-
-?>

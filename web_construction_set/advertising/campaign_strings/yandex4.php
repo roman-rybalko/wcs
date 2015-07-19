@@ -55,5 +55,3 @@ class Yandex4 implements \WebConstructionSet\Advertising\CampaignStrings {
 		return $campIds;
 	}
 }
-
-?>
