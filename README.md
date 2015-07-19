@@ -28,7 +28,7 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 ## Advertising\CampaignString
 Компоненты, которые извлекают строку рекламной кампании при переходе из поисковой системы.
 
-## Advertising\CampaignStrings, Advertising\CampaignStrings\Yandex4
+## Advertising\CampaignStrings, Advertising\CampaignStrings\Yandex4, Advertising\CampaignStrings\Google
 Компоненты, которые извлекают строки рекламных кампаний из настроек Yandex.Direct, Google AdWords и др. источников.
 
 ## Database\Relational
@@ -60,3 +60,12 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 
 ## Accounting\OAuth\Yandex
 Реализация OAuth Яндекс.
+
+## Accounting\OAuth\Google
+Реализация OAuth (2.0) Google.
+
+## Accounting\OAuth\OAuth2
+Упрощенная реализация OAuth 2.0 (только grant_type=authorization_code, аутентификация client_secret).
+
+## Database\Relational\Pdo
+Реализация на основе PDO.
