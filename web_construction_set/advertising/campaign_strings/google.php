@@ -21,7 +21,8 @@ class Google implements \WebConstructionSet\Advertising\CampaignStrings {
 	 * Инициализация
 	 * @param array $authData [client_id => ..., client_secret => ..., access_token|refresh_token => ...]
 	 * @param string $developerToken Пароль на доступ к API (см. в настройках MCC-аккаунта)
-	 * @param string $companyName Название организации
+	 * @param string $companyName Название организации (User Agent в запросах SOAP - они так требуют)
+	 * @param unknown $clientCustomerId http://support.google.com/adwords/answer/29198
 	 */
 	public function __construct($authData, $developerToken, $companyName, $clientCustomerId) {
 		$this->authData = $authData;
