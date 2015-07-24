@@ -10,13 +10,7 @@ class User implements \WebConstructionSet\Database\User {
 	}
 
 	public function create($login, $password) {
-		$id = null;
-		if ($this->db->insert('users', ['login' => $login, 'passhash' => password_hash($password, PASSWORD_DEFAULT)])) {
-			$data = $this->db->select('users', ['id'], ['login' => $login]);
-			if ($data)
-				$id = $data[0]['id'];
-		}
-		return $id;
+		return $this->db->insert('users', ['login' => $login, 'passhash' => password_hash($password, PASSWORD_DEFAULT)]);
 	}
 
 	public function check($login, $password) {

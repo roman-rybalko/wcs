@@ -11,11 +11,7 @@ class Pdo implements \WebConstructionSet\Database\Relational {
 	private $pdo;
 
 	public function __construct($dsn, $user = null, $pass = null) {
-		$opt = [
-				\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-				\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
-		];
-		$this->pdo = new \PDO($dsn, $user, $pass, $opt);
+		$this->pdo = new \PDO($dsn, $user, $pass, [\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC]);
 	}
 
 	public function select($tableName, $what = [], $where = [], $addSql = '') {
@@ -55,7 +51,15 @@ class Pdo implements \WebConstructionSet\Database\Relational {
 		}, $what)) . ')';
 		$stm = $this->pdo->prepare($query);
 		$stm->execute(array_values($what));
-		return $this->pdo->query('SELECT LAST_INSERT_ID() AS id')->fetchAll()[0]['id'];
+		$count = $this->pdo->query('SELECT ROW_COUNT() AS count')->fetchAll()[0]['count'];
+		$id = $this->pdo->query('SELECT LAST_INSERT_ID() AS id')->fetchAll()[0]['id'];
+		if ($count > 0)
+			if ($id)
+				return $id;
+			else
+				return -1;
+		else
+			return 0;
 	}
 
 	public function delete($tableName, $where) {
