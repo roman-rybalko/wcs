@@ -14,10 +14,9 @@ interface Relational {
 	 * @param string $tableName
 	 * @param array[string] $what
 	 * @param array[string => string] $where
-	 * @param string $addSql
 	 * @return array Ассоциативный массив
 	 */
-	public function select($tableName, $what = [], $where = [], $addSql = '');
+	public function select($tableName, $what = [], $where = []);
 
 	/**
 	 * UPDATE

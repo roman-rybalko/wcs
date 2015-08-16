@@ -14,7 +14,7 @@ class Pdo implements \WebConstructionSet\Database\Relational {
 		$this->pdo = new \PDO($dsn, $user, $pass, [\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC]);
 	}
 
-	public function select($tableName, $what = [], $where = [], $addSql = '') {
+	public function select($tableName, $what = [], $where = []) {
 		$query = 'SELECT';
 		if ($what)
 			$query .= ' ' . implode(', ', $what);
@@ -25,7 +25,6 @@ class Pdo implements \WebConstructionSet\Database\Relational {
 			$query .= ' WHERE ' . implode(' AND ', array_map(function ($val) {
 				return $val . ' = ?';
 			}, array_keys($where)));
-		$query .= $addSql;
 		$stm = $this->pdo->prepare($query);
 		$stm->execute(array_values($where));
 		return $stm->fetchAll();

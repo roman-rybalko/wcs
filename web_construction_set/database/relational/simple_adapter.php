@@ -10,9 +10,9 @@ class SimpleAdapter implements \WebConstructionSet\Database\Relational {
 		$this->debug = $debug;
 	}
 
-	public function select($tableName, $what = [], $where = [], $addSql = '') {
+	public function select($tableName, $what = [], $where = []) {
 		try {
-			return $this->db->select($tableName, $what, $where, $addSql);
+			return $this->db->select($tableName, $what, $where);
 		} catch (\Exception $e) {
 			if ($this->debug)
 				error_log($e->getMessage());
