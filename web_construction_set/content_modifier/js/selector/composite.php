@@ -1,8 +1,8 @@
 <?php
 
-namespace WebConstructionSet\ContentModifier\Js;
+namespace WebConstructionSet\ContentModifier\Js\Selector;
 
-class CompositeSelector implements Selector {
+class Composite implements \WebConstructionSet\ContentModifier\Js\Selector {
 	private $jq_selectors;
 
 	public function __construct($jq_selectors = []) {

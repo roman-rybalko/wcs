@@ -1,8 +1,8 @@
 <?php
 
-namespace WebConstructionSet\ContentModifier\Js;
+namespace WebConstructionSet\ContentModifier\Js\Modifier;
 
-class AppendModifier implements Modifier {
+class Append implements \WebConstructionSet\ContentModifier\Js\Modifier {
 	private $data;
 
 	public function __construct($append_text) {

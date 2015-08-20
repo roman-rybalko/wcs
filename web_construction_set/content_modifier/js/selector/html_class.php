@@ -1,8 +1,8 @@
 <?php
 
-namespace WebConstructionSet\ContentModifier\Js;
+namespace WebConstructionSet\ContentModifier\Js\Selector;
 
-class ClassSelector implements Selector {
+class HtmlClass implements \WebConstructionSet\ContentModifier\Js\Selector {
 	private $class_name;
 
 	public function __construct($class_name) {

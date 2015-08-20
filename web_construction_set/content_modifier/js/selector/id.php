@@ -1,8 +1,8 @@
 <?php
 
-namespace WebConstructionSet\ContentModifier\Js;
+namespace WebConstructionSet\ContentModifier\Js\Selector;
 
-class IdSelector implements Selector {
+class Id implements \WebConstructionSet\ContentModifier\Js\Selector {
 	private $id;
 
 	public function __construct($id) {
