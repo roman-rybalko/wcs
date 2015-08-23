@@ -12,6 +12,7 @@ class LibxmlErrorHandler {
 	}
 
 	function __destruct() {
+		libxml_clear_errors();
 		libxml_use_internal_errors(false);
 	}
 

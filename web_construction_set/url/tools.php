@@ -27,4 +27,39 @@ class Tools {
 	public static function getNeighbourUrl($scriptName) {
 		return dirname(Tools::getMyUrlName()) . '/' . $scriptName;
 	}
+
+	/**
+	 * Извлекает схему и имя сервера http://server.name
+	 * @param string $url
+	 * @return string|NULL URL
+	 */
+	public static function makeServerUrl($url) {
+		while (preg_match('~//\S+/~', $url))
+			$url = dirname($url);
+		if (preg_match('~//\S+~', $url))
+			return $url;
+		return null;
+	}
+
+	/**
+	 * Нормализует url (убирает /../ /./)
+	 * @param string $url
+	 * @return string URL
+	 */
+	public static function normalize($url) {
+		if (preg_match('~^\s*(\S*//[^\/]+)(/.+)$~', $url, $matches)) {
+			$segments = explode('/', $matches[2]);
+			$path = [];
+			foreach($segments as $segment){
+				if ($segment == '.')
+					continue;
+				if ($segment == '..')
+					array_pop($path);
+				else
+					array_push($path, $segment);
+			}
+			$url = $matches[1] . implode('/', $path);
+		}
+		return $url;
+	}
 }

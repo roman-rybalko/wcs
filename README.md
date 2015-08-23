@@ -25,6 +25,9 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 ## ContentModifier\Xslt, OutputBuffer\XsltHtml
 Обработчик XSLT.
 
+## ContentModifier\Proxy
+Проксирует URL.
+
 ## Advertising\CampaignString
 Компоненты, которые извлекают строку рекламной кампании при переходе из поисковой системы.
 
