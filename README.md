@@ -70,5 +70,8 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 ## Accounting\OAuth\OAuth2
 Упрощенная реализация OAuth 2.0 (только grant_type=authorization_code, аутентификация client_secret).
 
-## Database\Relational\Pdo
+## Database\Relational\Pdo, Database\Relational\Pdo\Predicate\Less, LessEq, Greater, GreaterEq
 Реализация на основе PDO.
+
+## Database\Relational\Anacron
+Реализация anacron на реляционной БД.
