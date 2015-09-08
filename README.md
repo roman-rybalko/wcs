@@ -75,3 +75,6 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 
 ## Database\Relational\Anacron
 Реализация anacron на реляционной БД.
+
+## Database\Relational\History
+БД событий, лог.

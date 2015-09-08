@@ -17,7 +17,7 @@ class Anacron {
 
 	/**
 	 * Создать задачу
-	 * @param array $task [start => Unix timestamp, pariod => seconds, data => mixed]
+	 * @param array $task [start => integer (Unix timestamp), pariod => integer (seconds), data => mixed]
 	 * @param integer $taskKey
 	 * @return integer taskId
 	 */
@@ -31,7 +31,7 @@ class Anacron {
 	/**
 	 * Получить список задач, готовых к выполнению
 	 * @param integer $taskKey null - all tasks
-	 * @return array [id => integer, data => mixed]
+	 * @return [][id => integer, data => mixed, key => integer]
 	 */
 	public function ready($taskKey = 0) {
 		$filter = ['start_time' => new \WebConstructionSet\Database\Relational\Pdo\Predicate\LessEq(time())];
@@ -53,7 +53,7 @@ class Anacron {
 	 * Получить список зарегистрированных задач
 	 * @param array $taskIds
 	 * @param integer $taskKey null - all tasks
-	 * @return array [id => integer, start => integer, period => integer, data => mixed]
+	 * @return [][id => integer, start => integer, period => integer, data => mixed]
 	 */
 	public function get($taskIds = null, $taskKey = 0) {
 		$filter = [];
@@ -78,7 +78,7 @@ class Anacron {
 	/**
 	 * Обновить задачу
 	 * @param integer $taskId
-	 * @param array $task [start (optional) => Unix timestamp, pariod (optional) => seconds, data (optional) => mixed]
+	 * @param array $task [start => integer (Unix timestamp, optional), pariod => integer (seconds, optional), data => mixed (optional)]
 	 * @param integer $taskKey
 	 * @return boolean
 	 */
