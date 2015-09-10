@@ -52,4 +52,8 @@ class SimpleAdapter implements \WebConstructionSet\Database\Relational {
 			return 0;
 		}
 	}
+
+	public function predicate($predName, $value) {
+		return $this->db->predicate($predName, $value);
+	}
 }

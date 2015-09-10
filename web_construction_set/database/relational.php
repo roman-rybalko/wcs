@@ -42,4 +42,12 @@ interface Relational {
 	 * @return integer Количество удаленных строк
 	 */
 	public function delete($tableName, $where);
+
+	/**
+	 * Получить предикат, который можно использовать в значениях $where
+	 * @param string $predName Имя предиката (eq, ge, Less, LessEq, greater_eq)
+	 * @param unknown $value Значение, к которому применить предикат
+	 * @return class
+	 */
+	public function predicate($predName, $value);
 }

@@ -53,6 +53,6 @@ class History {
 	 * @return integer Количество удаленных
 	 */
 	public function clear($time) {
-		return $this->db->delete($this->table, ['time' => new \WebConstructionSet\Database\Relational\Pdo\Predicate\Less($time)]);
+		return $this->db->delete($this->table, ['time' => $this->db->predicate('less', $time)]);
 	}
 }

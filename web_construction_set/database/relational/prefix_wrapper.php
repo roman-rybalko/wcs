@@ -38,4 +38,8 @@ class PrefixWrapper implements \WebConstructionSet\Database {
 			$key = $this->fieldPrefix . $key;
 		return $db->delete($this->tablePrefix . $tableName, $where);
 	}
+
+	public function predicate($predName, $value) {
+		return $this->db->predicate($predName, $value);
+	}
 }

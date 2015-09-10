@@ -85,4 +85,36 @@ class Pdo implements \WebConstructionSet\Database\Relational {
 				$values[] = $value;
 		return $values;
 	}
+
+	public function predicate($predName, $value) {
+		switch ($predName) {
+			case 'eq':
+			case 'Eq':
+				return $value;
+			case 'ne':
+			case 'not_eq':
+			case 'NotEq':
+				return new Pdo\Predicate\NotEq($value);
+			case 'gt':
+			case 'greater':
+			case 'Greater':
+				return new Pdo\Predicate\Greater($value);
+			case 'ge':
+			case 'greater_eq':
+			case 'GreaterEq':
+				return new Pdo\Predicate\GreaterEq($value);
+			case 'lt':
+			case 'less':
+			case 'Less':
+				return new Pdo\Predicate\Less($value);
+			case 'le':
+			case 'less_eq':
+			case 'LessEq':
+				return new Pdo\Predicate\LessEq($value);
+			case '':
+			default:
+				throw new \ErrorException('Predicate ' . $predName . ' is not supported', null, null, __FILE__, __LINE__);
+				break;
+		}
+	}
 }

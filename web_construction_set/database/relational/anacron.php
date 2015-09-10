@@ -34,7 +34,7 @@ class Anacron {
 	 * @return [][id => integer, data => mixed, key => integer]
 	 */
 	public function ready($taskKey = 0) {
-		$filter = ['start_time' => new \WebConstructionSet\Database\Relational\Pdo\Predicate\LessEq(time())];
+		$filter = ['start_time' => $this->db->predicate('less', time())];
 		if ($taskKey !== null)
 			$filter['user_key'] = $taskKey;
 		$data = $this->db->select($this->table, ['id', 'start_time', 'period_time', 'data', 'user_key'], $filter);
