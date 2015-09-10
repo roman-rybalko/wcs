@@ -6,23 +6,22 @@ namespace WebConstructionSet\Database;
  * Интерфейс к реляционной БД.
  * $what - ['поле' => значение, ...]
  * $where - ['поле' => значение, ...]
- * @author Жерносек Станислав Александрович <sz@lp2b.pro>
  */
 interface Relational {
 	/**
 	 * SELECT
 	 * @param string $tableName
-	 * @param array[string] $what
-	 * @param array[string => string] $where
-	 * @return array Ассоциативный массив
+	 * @param [string] $what
+	 * @param [string => string] $where
+	 * @return [string => string] $what -> field => value
 	 */
 	public function select($tableName, $what = [], $where = []);
 
 	/**
 	 * UPDATE
 	 * @param string $tableName
-	 * @param array[string => string] $what
-	 * @param array[string => string] $where
+	 * @param [string => string] $what
+	 * @param [string => string] $where
 	 * @return integer Количество обновленных строк
 	 */
 	public function update($tableName, $what, $where);
@@ -30,7 +29,7 @@ interface Relational {
 	/**
 	 * INSERT
 	 * @param string $tableName
-	 * @param array[string => string] $what
+	 * @param [string => string] $what
 	 * @return integer Индекс вставленной записи (поле auto_increment)
 	 */
 	public function insert($tableName, $what);
@@ -38,7 +37,7 @@ interface Relational {
 	/**
 	 * DELETE
 	 * @param string $tableName
-	 * @param array[string => string] $where
+	 * @param [string => string] $where
 	 * @return integer Количество удаленных строк
 	 */
 	public function delete($tableName, $where);

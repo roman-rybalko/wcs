@@ -17,7 +17,7 @@ class Anacron {
 
 	/**
 	 * Создать задачу
-	 * @param array $task [start => integer (Unix timestamp), pariod => integer (seconds), data => mixed]
+	 * @param [start => integer, period => integer, data => mixed] $task start: Unix timestamp, period: seconds
 	 * @param integer $taskKey
 	 * @return integer taskId
 	 */
@@ -51,7 +51,7 @@ class Anacron {
 
 	/**
 	 * Получить список зарегистрированных задач
-	 * @param array $taskIds
+	 * @param [integer] $taskIds
 	 * @param integer $taskKey null - all tasks
 	 * @return [][id => integer, start => integer, period => integer, data => mixed]
 	 */
@@ -78,7 +78,7 @@ class Anacron {
 	/**
 	 * Обновить задачу
 	 * @param integer $taskId
-	 * @param array $task [start => integer (Unix timestamp, optional), pariod => integer (seconds, optional), data => mixed (optional)]
+	 * @param [start => integer, period => integer, data => mixed] $task start: Unix timestamp, optional, period: seconds, optional, data: optional
 	 * @param integer $taskKey
 	 * @return boolean
 	 */

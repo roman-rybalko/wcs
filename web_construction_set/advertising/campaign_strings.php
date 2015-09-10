@@ -8,7 +8,7 @@ namespace WebConstructionSet\Advertising;
 interface CampaignStrings {
 	/**
 	 * Получить строки
-	 * @return array
+	 * @return [string]
 	 */
 	public function get();
 }
