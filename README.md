@@ -40,8 +40,8 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 ## Database\Relational\PrefixWrapper
 Адаптер для замены имен таблиц и полей.
 
-## Database\Relational\SimpleAdapter
-Адаптер для произвольного класса с аналогичным интерфейсом, обрабатывает исключения.
+## Database\TableWrapper
+Интерфейс БД работы с одной таблицей. Multikey-Multivalue.
 
 ## Accounting\User, Database\User, Database\Relational\User
 Управление пользователями: проверка пароля, ведение сессии.
