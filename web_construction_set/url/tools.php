@@ -5,18 +5,29 @@ namespace WebConstructionSet\Url;
 class Tools {
 	/**
 	 * Получить полный URL к собственному (исполняемому) скрипту
-	 * @return string
+	 * @return string URL
 	 */
 	public static function getMyUrl() {
 		return (empty($_SERVER['HTTPS']) ? 'http' : 'https') . '://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 	}
 
 	/**
-	 * получить URL к собственному (исполняемому) скрипту без параметров
+	 * Получить URL к собственному (исполняемому) скрипту без параметров
 	 * @return string URL
 	 */
 	public static function getMyUrlName() {
-		return (empty($_SERVER['HTTPS']) ? 'http' : 'https') . '://' . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'];
+		return preg_replace('/\?.+/', '', Tools::getMyUrl());
+	}
+
+	/**
+	 * Полчить URL к каталогу, где лежит выполняемый скрипт
+	 * @return string URL
+	 */
+	public static function getMyUrlPath() {
+		$path = preg_replace('~/[^/]+$~', '/', Tools::getMyUrlName());
+		if (!preg_match('~/$~', $path))
+			$path .= '/';
+		return $path;
 	}
 
 	/**
@@ -25,11 +36,11 @@ class Tools {
 	 * @return string URL
 	 */
 	public static function getNeighbourUrl($scriptName) {
-		return dirname(Tools::getMyUrlName()) . '/' . $scriptName;
+		return Tools::getMyUrlPath() . $scriptName;
 	}
 
 	/**
-	 * Извлекает схему и имя сервера http://server.name
+	 * Извлечь схему и имя сервера http://server.name
 	 * @param string $url
 	 * @return string|NULL URL
 	 */
@@ -42,7 +53,7 @@ class Tools {
 	}
 
 	/**
-	 * Нормализует url (убирает /../ /./)
+	 * Нормализация url (убирает /../ /./)
 	 * @param string $url
 	 * @return string URL
 	 */
@@ -61,5 +72,18 @@ class Tools {
 			$url = $matches[1] . implode('/', $path);
 		}
 		return $url;
+	}
+
+	/**
+	 * Добавить параметры к url
+	 * Вставляет разделитель "?" или "&", кодирует значения
+	 * @param string $url
+	 * @param [string => string] $params
+	 */
+	public static function addParams($url, $params) {
+		if (strpos($url, '?') === false)
+			return $url . '?' . http_build_query($params);
+		else
+			return $url . '&' . http_build_query($params);
 	}
 }
