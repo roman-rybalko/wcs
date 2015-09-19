@@ -53,7 +53,7 @@ class Anacron {
 	 * Получить список зарегистрированных задач
 	 * @param [integer] $taskIds
 	 * @param integer $taskKey null - all tasks
-	 * @return [][id => integer, start => integer, period => integer, data => mixed]
+	 * @return [][id => integer, start => integer, period => integer, data => mixed, key => integer]
 	 */
 	public function get($taskIds = null, $taskKey = 0) {
 		$filter = [];
