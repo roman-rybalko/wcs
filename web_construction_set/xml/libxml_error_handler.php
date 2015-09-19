@@ -18,15 +18,14 @@ class LibxmlErrorHandler {
 
 	/**
 	 * Получить описание ошибок с момента последнего вызова getErrorString.
-	 * @return string
+	 * @return string|null
 	 */
 	public function getErrorString() {
 		$errors = libxml_get_errors();
-		$errstr = count($errors) . ' errors total';
+		$errstr = null;
 		if ($errors)
-			$errstr .= ': ' . implode('; ', array_map(function($error){return $this->parseLibXmlError($error);}, $errors));
-		else
-			$errstr .= '.';
+			$errstr = count($errors) . ' errors total: '
+				. implode('; ', array_map(function($error){return $this->parseLibXmlError($error);}, $errors));
 		return $errstr;
 	}
 
