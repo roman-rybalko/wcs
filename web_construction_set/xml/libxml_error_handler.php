@@ -7,11 +7,15 @@ namespace WebConstructionSet\Xml;
  * Форматирует ошибки libxml.
  */
 class LibxmlErrorHandler {
+	private $prev;
+
 	function __construct() {
-		libxml_use_internal_errors(true);
+		$this->prev = libxml_use_internal_errors(true);
 	}
 
 	function __destruct() {
+		if ($this->prev)
+			return;
 		libxml_clear_errors();
 		libxml_use_internal_errors(false);
 	}
