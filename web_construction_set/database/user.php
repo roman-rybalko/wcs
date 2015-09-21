@@ -51,4 +51,10 @@ interface User {
 	 * @return boolean
 	 */
 	public function password($id, $newPassword);
+
+	/**
+	 * Список пользователей
+	 * @return [][id => integer, login => string]
+	 */
+	public function get($ids = null);
 }

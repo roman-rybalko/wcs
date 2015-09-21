@@ -40,4 +40,18 @@ class User implements \WebConstructionSet\Database\User {
 	public function password($id, $newPassword) {
 		return $this->db->update($this->table, ['passhash' => password_hash($newPassword, PASSWORD_DEFAULT)], ['id' => $id]);
 	}
+
+	public function get($ids = null) {
+		if ($ids) {
+			$data = [];
+			foreach ($ids as $id)
+				if ($data1 = $this->db->select($this->table, ['id', 'login'], ['id' => $id]))
+					$data = array_merge($data, $data1);
+		} else {
+			$data = $this->db->select($this->table, ['id', 'login']);
+			if (!$data)
+				$data = [];
+		}
+		return $data;
+	}
 }
