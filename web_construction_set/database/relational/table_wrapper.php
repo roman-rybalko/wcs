@@ -1,6 +1,6 @@
 <?php
 
-namespace WebConstructionSet\Database;
+namespace WebConstructionSet\Database\Relational;
 
 class TableWrapper {
 	private $db, $table, $fields;

@@ -60,7 +60,7 @@ class Anacron {
 		if ($taskKey !== null)
 			$filter['user_key'] = $taskKey;
 		$data = [];
-		if ($taskIds)
+		if ($taskIds !== null)
 			foreach ($taskIds as $taskId) {
 				$task = $this->db->select($this->table, ['id', 'start_time', 'period_time', 'data', 'user_key'], array_merge($filter, ['id' => $taskId]));
 				if ($task)

@@ -40,7 +40,7 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 ## Database\Relational\PrefixWrapper
 Адаптер для замены имен таблиц и полей.
 
-## Database\TableWrapper
+## Database\Relational\TableWrapper
 Интерфейс БД работы с одной таблицей. Multikey-Multivalue.
 
 ## Accounting\User, Database\User, Database\Relational\User
@@ -78,3 +78,6 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 
 ## Database\Relational\History
 БД событий, лог.
+
+## Database\Relational\Billing
+БД финансовой информации (транзакции, баланс).
