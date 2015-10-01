@@ -34,14 +34,14 @@ class Anacron {
 	 * @return [][id => integer, data => mixed, key => integer]
 	 */
 	public function ready($taskKey = 0) {
-		$filter = ['start_time' => $this->db->predicate('less', time())];
+		$filter = ['start_time' => $this->db->predicate('less_eq', time())];
 		if ($taskKey !== null)
 			$filter['user_key'] = $taskKey;
 		$data = $this->db->select($this->table, ['id', 'start_time', 'period_time', 'data', 'user_key'], $filter);
 		$tasks = [];
 		foreach ($data as $task) {
 			$time = $task['start_time'];
-			while ($time < time())
+			while ($time <= time())
 				$time += $task['period_time'];
 			if ($this->db->update($this->table, ['start_time' => $time], ['id' => $task['id'], 'start_time' => $task['start_time']]))
 				$tasks[] = ['id' => $task['id'], 'data' => json_decode($task['data'], true /* assoc */), 'key' => $task['user_key']];
