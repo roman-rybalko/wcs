@@ -79,6 +79,7 @@ class Tools {
 	 * Вставляет разделитель "?" или "&", кодирует значения
 	 * @param string $url
 	 * @param [string => string] $params
+	 * @return string URL
 	 */
 	public static function addParams($url, $params) {
 		if (strpos($url, '?') === false)
