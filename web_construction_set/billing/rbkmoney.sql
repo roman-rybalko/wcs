@@ -1,0 +1,12 @@
+create table rbkmoney_transactions(id integer primary key auto_increment not null, user_key integer, time integer not null, orderId integer not null, recipientAmount double not null, recipientCurrency varchar(3) not null, email varchar(256) not null, serviceName varchar(256), timeout integer not null, invoiceId integer, paymentStatus integer, paymentId integer, declineMessage varchar(256));
+create unique index rbkmoney_transactions_idx1 on rbkmoney_transactions(orderId);
+create index rbkmoney_transactions_idx2 on rbkmoney_transactions(user_key);
+create table rbkmoney_subscriptions(id integer primary key auto_increment not null, user_key integer, time integer not null, paymentid integer not null, recurringpaymentid integer not null);
+create unique index rbkmoney_subscriptions_idx1 on rbkmoney_subscriptions(paymentid);
+create index rbkmoney_subscriptions_idx2 on rbkmoney_subscriptions(user_key);
+create table rbkmoney_log(id integer primary key auto_increment not null, user_key integer, time integer not null, invoiceId integer, paymentId integer, orderId integer, data varchar(16384));
+create index rbkmoney_log1 on rbkmoney_log(user_key);
+create index rbkmoney_log2 on rbkmoney_log(time);
+create index rbkmoney_log3 on rbkmoney_log(invoiceId);
+create index rbkmoney_log4 on rbkmoney_log(paymentId);
+create index rbkmoney_log5 on rbkmoney_log(orderId);
