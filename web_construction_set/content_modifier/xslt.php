@@ -18,7 +18,7 @@ class Xslt {
 	public function __construct($baseUri = '') {
 		$this->baseUri = $baseUri;
 	}
-	
+
 	/**
 	 * Переопределить XSL-шаблон (строка XML).
 	 * Шаблон из XML использоваться не будет.
@@ -59,10 +59,10 @@ class Xslt {
 		$this->resultDoc = $xslt->transformToDoc($xml);
 		if (!$this->resultDoc)
 			throw new \ErrorException('XSLT transform failed. ' . $errorHandler->getErrorString(), null, null, __FILE__, __LINE__);
-		
+
 		// no return
 	}
-	
+
 	/**
 	 * Польчить результат в виде XML
 	 * @return string XML-строка
@@ -70,7 +70,7 @@ class Xslt {
 	public function getXml() {
 		return $this->resultDoc->saveXML();
 	}
-	
+
 	/**
 	 * Получить результат в виде HTML
 	 * @return string HTML-строка
@@ -82,7 +82,7 @@ class Xslt {
 	private function getXslStylesheetPath($node) {
 		if (!$node)
 			return null;
-		if (get_class($node) == 'DOMProcessingInstruction' && $node->target == 'xml-stylesheet' && preg_match('/ href=["\'](.+?)["\']/', $node->data, $matches))
+		if (get_class($node) == 'DOMProcessingInstruction' && $node->target == 'xml-stylesheet' && preg_match('/href=["\'](.+?)["\']/', $node->data, $matches))
 			return $this->baseUri . $matches[1];
 		// эта нода где-то рядом - быстрее найдем с начала в ширь затем в губь
 		$url = $this->getXslStylesheetPath($node->nextSibling);
