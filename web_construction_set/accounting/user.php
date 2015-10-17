@@ -27,7 +27,7 @@ class User {
 	public function getId() {
 		return $this->getSessionValue('id');
 	}
-	
+
 	/**
 	 * Получить логин текущего пользователя
 	 * @return string
@@ -55,11 +55,14 @@ class User {
 	/**
 	 * Проверить учетные данные пользователя, инициировать сессию
 	 * @param string $login
-	 * @param string $password
+	 * @param string|null $password пароль или null если проверять пароль не нужно
 	 * @return boolean
 	 */
 	public function login($login, $password) {
-		$id = $this->db->check($login, $password);
+		if ($password === null)
+			$id = $this->db->getId($login);
+		else
+			$id = $this->db->check($login, $password);
 		if ($id) {
 			$this->setSessionValue('id', $id);
 			$this->setSessionValue('login', $login);

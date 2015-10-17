@@ -10,7 +10,7 @@ interface User {
 	 * Создать нового пользователя
 	 * @param string $login
 	 * @param string $password
-	 * @return integer Идентификатор пользователя или null
+	 * @return integer|null Идентификатор пользователя
 	 */
 	public function create($login, $password);
 
@@ -18,14 +18,14 @@ interface User {
 	 * Проверить учетные данные пользователя
 	 * @param string $login
 	 * @param string $password
-	 * @return integer Идентификатор пользователя или null
+	 * @return integer|null Идентификатор пользователя
 	 */
 	public function check($login, $password);
 
 	/**
 	 * Получить идентификатор пользователя
 	 * @param string $login
-	 * @return integer Числовой идентификатор пользователя или null
+	 * @return integer|null Идентификатор пользователя
 	 */
 	public function getId($login);
 
