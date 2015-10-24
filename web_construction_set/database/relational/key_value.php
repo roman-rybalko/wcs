@@ -13,6 +13,13 @@ class KeyValue implements \WebConstructionSet\Database\KeyValue {
 	}
 
 	public function set($key, $value) {
+		if ($this->db->select($this->tableName, [$this->valueFieldName], [$this->keyFieldName => $key]))
+			return $this->db->update($this->tableName, [$this->valueFieldName => $value], [$this->keyFieldName => $key]);
+		else
+			return $this->db->insert($this->tableName, [$this->keyFieldName => $key, $this->valueFieldName => $value]);
+	}
+
+	public function add($key, $value) {
 		return $this->db->insert($this->tableName, [$this->keyFieldName => $key, $this->valueFieldName => $value]);
 	}
 
