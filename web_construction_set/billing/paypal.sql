@@ -1,6 +1,7 @@
-create table paypal_transactions(id integer primary key auto_increment not null, user_key integer, time integer not null, amt double, currencycode varchar(4), token varchar(32));
+create table paypal_transactions(id integer primary key auto_increment not null, user_key integer, time integer not null, invnum integer not null, amt double, currencycode varchar(4), token varchar(32));
 create unique index paypal_transactions_idx1 on paypal_transactions(token);
 create index paypal_transactions_idx2 on paypal_transactions(user_key);
+create unique index paypal_transactions_idx3 on paypal_transactions(invnum);
 create table paypal_subscriptions(id integer primary key auto_increment not null, user_key integer, time integer not null, billingagreementid varchar(32));
 create unique index paypal_subscriptions_idx1 on paypal_subscriptions(billingagreementid);
 create index paypal_subscriptions_idx2 on paypal_subscriptions(user_key);

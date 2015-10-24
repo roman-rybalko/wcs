@@ -40,7 +40,7 @@ class Paypal {
 	}
 
 	/**
-	 * Начать транзакцию
+	 * SetExpressCheckout
 	 * @param integer $invnum Идентификатор платежа, показывается клиенту в поле Invoice ID.
 	 * @param double $amt
 	 * @param string $currencycode
@@ -67,20 +67,20 @@ class Paypal {
 			$params['L_BILLINGAGREEMENTDESCRIPTION0'] = $subscription;
 		}
 		$params = array_merge($params, $addParams);
-		if ($result = $this->call($params))
+		$result = $this->call($params);
+		if ($result)
 			if (isset($result['TOKEN']))
-				if ($id = $this->transactions->insert(['time' => time(), 'amt' => $amt, 'currencycode' => $currencycode, 'token' => $result['TOKEN']]))
+				if ($id = $this->transactions->insert(['time' => time(), 'invnum' => $invnum, 'amt' => $amt, 'currencycode' => $currencycode, 'token' => $result['TOKEN']]))
 					return $id;
-		$this->transactions->delete(['id' => $id]);
 		return null;
 	}
 
 	/**
 	 * @param [integer] $ids
-	 * @return [][id => integer, key => integer, time => integer, amt => double, currencycode => string, token => string, url => string]
+	 * @return [][id => integer, key => integer, time => integer, invnum => integer, amt => double, currencycode => string, token => string, url => string]
 	 */
 	public function getTransactions($ids = null) {
-		$fields = ['id', 'user_key', 'time', 'amt', 'currencycode', 'token'];
+		$fields = ['id', 'user_key', 'time', 'invnum', 'amt', 'currencycode', 'token'];
 		if ($ids === null) {
 			$data = $this->transactions->select($fields);
 		} else {
@@ -100,8 +100,10 @@ class Paypal {
 	}
 
 	/**
+	 * GetExpressCheckoutDetails/DoExpressCheckoutPayment
 	 * @param integer $id
-	 * @return [amt => double, currencycode => string, data => string]|null
+	 * @return [invnum => integer, amt => double, currencycode => string,
+	 *  transactionid => string|null, subscription_id (optional) => integer, data => string] | null
 	 */
 	public function processTransaction($id) {
 		$data = $this->getTransactions([$id]);
@@ -117,35 +119,49 @@ class Paypal {
 			'TOKEN' => $transaction['token']
 		];
 		$result = $this->call($params);
-		if ($result && isset($result['PAYERID'])) {
-			$params = [
-				'USER' => $this->user,
-				'PWD' => $this->password,
-				'SIGNATURE' => $this->signature,
-				'VERSION' => $this->apiVersion,
-				'METHOD' => 'DoExpressCheckoutPayment',
-				'TOKEN' => $transaction['token'],
-				'PAYERID' => $result['PAYERID'],
-				'MSGSUBID' => $result['PAYMENTREQUEST_0_INVNUM'],
-				'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale',
-				'PAYMENTREQUEST_0_AMT' => $transaction['amt'],
-				'PAYMENTREQUEST_0_CURRENCYCODE' => $transaction['currencycode']
-			];
-			if ($result = $this->call($params)) {
-				$data = 'Token: ' . $transaction['token'];
-				if (isset($result['BILLINGAGREEMENTID']))
-					if ($this->subscriptions->insert(['time' => time(), 'billingagreementid' => $result['BILLINGAGREEMENTID']]))
-						$data .= ', New Billing Agreement ID: ' . $result['BILLINGAGREEMENTID'];
-				if (isset($result['PAYMENTINFO_0_TRANSACTIONID'])) {
-					$data .= ', Invoice ID: ' . $result['MSGSUBID'];
-					if ($this->transactions->delete(['id' => $id]))
-						return ['amt' => $transaction['amt'], 'currencycode' => $transaction['currencycode'], 'data' => $data];
-				}
-				if (isset($result['ACK']) && $result['ACK'] == 'Failure') {
-					$data .= ', Message: ' . $result['L_SHORTMESSAGE0'];
-					if ($this->transactions->delete(['id' => $id]))
-						return ['amt' => 0, 'currencycode' => '', 'data' => $data];
-				}
+		if (!$result)
+			return null;
+		$data = 'Token: ' . $transaction['token'];
+		if (isset($result['ACK']) && $result['ACK'] == 'Failure') {
+			$data .= ', Message: ' . $result['L_SHORTMESSAGE0'] . ' (' . $result['L_LONGMESSAGE0'] . ')';
+			if ($this->transactions->delete(['id' => $id]))
+				return ['invnum' => $transaction['invnum'], 'amt' => 0, 'currencycode' => '', 'transactionid' => null, 'data' => $data];
+		}
+		if (!isset($result['PAYERID']))
+			return null;
+		$params = [
+			'USER' => $this->user,
+			'PWD' => $this->password,
+			'SIGNATURE' => $this->signature,
+			'VERSION' => $this->apiVersion,
+			'METHOD' => 'DoExpressCheckoutPayment',
+			'TOKEN' => $transaction['token'],
+			'PAYERID' => $result['PAYERID'],
+			'MSGSUBID' => $result['PAYMENTREQUEST_0_INVNUM'],
+			'PAYMENTREQUEST_0_PAYMENTACTION' => 'Sale',
+			'PAYMENTREQUEST_0_AMT' => $transaction['amt'],
+			'PAYMENTREQUEST_0_CURRENCYCODE' => $transaction['currencycode']
+		];
+		$result = $this->call($params);
+		if (!$result)
+			return null;
+		$data = 'Token: ' . $transaction['token'];
+		if (isset($result['ACK']) && $result['ACK'] == 'Failure') {
+			$data .= ', Message: ' . $result['L_SHORTMESSAGE0'] . ' (' . $result['L_LONGMESSAGE0'] . ')';
+			if ($this->transactions->delete(['id' => $id]))
+				return ['invnum' => $transaction['invnum'], 'amt' => 0, 'currencycode' => '', 'transactionid' => null, 'data' => $data];
+		}
+		if (isset($result['BILLINGAGREEMENTID']))
+			if ($subscriptionId = $this->subscriptions->insert(['time' => time(), 'billingagreementid' => $result['BILLINGAGREEMENTID']]))
+				$data .= ', Billing Agreement ID: ' . $result['BILLINGAGREEMENTID'];
+		if (isset($result['PAYMENTINFO_0_TRANSACTIONID'])) {
+			$data .= ', Invoice ID: ' . $result['MSGSUBID'];
+			if ($this->transactions->delete(['id' => $id])) {
+				$ret = ['invnum' => $transaction['invnum'], 'amt' => $transaction['amt'], 'currencycode' => $transaction['currencycode'],
+					'transactionid' => $result['PAYMENTINFO_0_TRANSACTIONID'], 'data' => $data];
+				if (isset($subscriptionId))
+					$ret['subscription_id'] = $subscriptionId;
+				return $ret;
 			}
 		}
 		return null;
@@ -161,7 +177,7 @@ class Paypal {
 
 	/**
 	 * @param [integer] $ids
-	 * @return [][id => integer, key => integer, time => integer, billingagreementid => string, ipaddress => string]
+	 * @return [][id => integer, key => integer, time => integer, billingagreementid => string]
 	 */
 	public function getSubscriptions($ids = null) {
 		$fields = ['id', 'user_key', 'time', 'billingagreementid'];
@@ -183,15 +199,16 @@ class Paypal {
 	}
 
 	/**
+	 * DoReferenceTransaction
 	 * @param integer $id
 	 * @param integer $invnum Идентификатор платежа, показывается клиенту в поле Invoice ID.
-	 * @param $addParams Нужно задать IPADDRESS - настоятельно требуется в документации.
-	 * @return [amt => double, currencycode => string, data => string]|null
+	 * @param [key => value] $addParams Нужно задать IPADDRESS - настоятельно требуется в документации.
+	 * @return [invnum => integer, amt => double, currencycode => string, transactionid => string|null, data => string] | null
 	 */
 	public function processSubscription($id, $invnum, $amt, $currencycode, $addParams = []) {
 		$data = $this->getSubscriptions([$id]);
 		if (!$data)
-			return null;
+			return ['invnum' => $invnum, 'amt' => 0, 'currencycode' => '', 'transactionid' => null, 'data' => 'Bad Subscription Id'];
 		$subscription = $data[0];
 		$params = [
 			'USER' => $this->user,
@@ -210,42 +227,71 @@ class Paypal {
 			$params['IPADDRESS'] = $_SERVER['REMOTE_ADDR'];
 		$params = array_merge($params, $addParams);
 		$result = $this->call($params);
-		if ($result) {
-			$data = 'Billing Agreement ID: ' . $subscription['billingagreementid'];
-			if (isset($result['TRANSACTIONID'])) {
-				$data .= ', Invoice ID: ' . $result['MSGSUBID'];
-				return ['amt' => $result['AMT'], 'currencycode' => $result['CURRENCYCODE'], 'data' => $data];
-			}
-			if (isset($result['ACK']) && $result['ACK'] == 'Failure') {
-				$data .= ', Message: ' . $result['L_SHORTMESSAGE0'];
-				return ['amt' => 0, 'currencycode' => '', 'data' => $data];
-			}
+		if (!$result)
+			return null;
+		$data = 'Billing Agreement ID: ' . $subscription['billingagreementid'];
+		if (isset($result['TRANSACTIONID'])) {
+			$data .= ', Invoice ID: ' . $result['MSGSUBID'];
+			return ['invnum' => $invnum, 'amt' => $result['AMT'], 'currencycode' => $result['CURRENCYCODE'],
+				'transactionid' => $result['TRANSACTIONID'], 'data' => $data];
+		}
+		if (isset($result['ACK']) && $result['ACK'] == 'Failure') {
+			$data .= ', Message: ' . $result['L_SHORTMESSAGE0'] . ' (' . $result['L_LONGMESSAGE0'] . ')';
+			return ['invnum' => $invnum, 'amt' => 0, 'currencycode' => '', 'transactionid' => null, 'data' => $data];
 		}
 		return null;
 	}
 
 	/**
+	 * BillAgreementUpdate/Canceled
 	 * @param integer $id
 	 * @return boolean
 	 */
 	public function cancelSubscription($id) {
 		$data = $this->getSubscriptions([$id]);
-		if ($data) {
-			$subscription = $data[0];
-			$params = [
-				'USER' => $this->user,
-				'PWD' => $this->password,
-				'SIGNATURE' => $this->signature,
-				'VERSION' => $this->apiVersion,
-				'METHOD' => 'BillAgreementUpdate',
-				'REFERENCEID' => $subscription['billingagreementid'],
-				'BILLINGAGREEMENTSTATUS' => 'Canceled'
-			];
-			$result = $this->call($params);
-			if (isset($result['ACK']) && $result['ACK'] == 'Failure')
-				error_log(new \ErrorException('Unable to cancel Billing Agreement: ' . $result['L_SHORTMESSAGE0'], null, null, __FILE__, __LINE__));
-		}
+		if (!$data)
+			return false;
+		$subscription = $data[0];
+		$params = [
+			'USER' => $this->user,
+			'PWD' => $this->password,
+			'SIGNATURE' => $this->signature,
+			'VERSION' => $this->apiVersion,
+			'METHOD' => 'BillAgreementUpdate',
+			'REFERENCEID' => $subscription['billingagreementid'],
+			'BILLINGAGREEMENTSTATUS' => 'Canceled'
+		];
+		$result = $this->call($params);
+		if (!$result)
+			return false;
 		return $this->subscriptions->delete(['id' => $id]);
+	}
+
+	/**
+	 * RefundTransaction
+	 * @param string $transactionid
+	 * @param [key => value] $addParams
+	 * @return [amt => double, currencycode => string, transactionid => string|null, data => string] | null
+	 */
+	public function refund($transactionid, $addParams = []) {
+		$params = [
+			'USER' => $this->user,
+			'PWD' => $this->password,
+			'SIGNATURE' => $this->signature,
+			'VERSION' => $this->apiVersion,
+			'METHOD' => 'RefundTransaction',
+			'TRANSACTIONID' => $transactionid
+		];
+		$params = array_merge($params, $addParams);
+		$result = $this->call($params);
+		if (!$result)
+			return null;
+		if (isset($result['ACK']) && $result['ACK'] == 'Success')
+			return ['amt' => $result['GROSSREFUNDAMT'], 'currencycode' => $result['CURRENCYCODE'],
+				'transactionid' => $result['REFUNDTRANSACTIONID'], 'data' => ''];
+		else
+			return ['amt' => 0, 'currencycode' => '', 'transactionid' => null,
+				'data' => $result['L_SHORTMESSAGE0'] . ' (' . $result['L_LONGMESSAGE0'] . ')'];
 	}
 
 	/**
@@ -289,7 +335,7 @@ class Paypal {
 			]
 		];
 		$context = stream_context_create($options);
-		$result = file_get_contents($this->endpointUrl, false /* use include path */, $context);
+		$result = @file_get_contents($this->endpointUrl, false /* use include path */, $context);
 		if (!$result)
 			return null;
 		$data = [];

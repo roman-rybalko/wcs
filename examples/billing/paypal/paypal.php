@@ -84,6 +84,19 @@ if (isset($_POST['cancel_subscription']))
 </form>
 <h3>Subscriptions:</h3>
 <?php dump($pp->getSubscriptions()); ?>
+<h3>Refund:</h3>
+<?php
+if (isset($_POST['refund'])) {
+	$params = [
+		'NOTE' => '(NOTE) Refund for Digital Items',
+	];
+	dump($pp->refund($_POST['transactionid'], $params));
+}
+?>
+<form method="post">
+<input type="text" name="transactionid" placeholder="transaction id"><br>
+<input type="submit" name="refund" value="Refund"><br>
+</form>
 <h3>Log:</h3>
 <?php
 $log = $pp->getLog();

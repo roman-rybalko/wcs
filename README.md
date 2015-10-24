@@ -79,5 +79,8 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 ## Database\Relational\History
 БД событий, лог.
 
-## Database\Relational\Billing - Unstable
+## Database\Relational\Billing
 БД финансовой информации (транзакции, баланс).
+
+## Billing\Paypal
+PayPal Express Checkout
