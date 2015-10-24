@@ -107,7 +107,7 @@ class OAuth2 implements \WebConstructionSet\Accounting\OAuth {
 					]
 			];
 			$context = stream_context_create($options);
-			$result = file_get_contents($this->tokenUri, false /* use include path */, $context);
+			$result = @file_get_contents($this->tokenUri, false /* use include path */, $context);
 			if ($result) {
 				$data = json_decode($result, true /* assoc */);
 				if (isset($data['access_token']) || isset($data['refresh_token'])) {

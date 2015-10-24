@@ -25,7 +25,7 @@ class Yandex4 implements \WebConstructionSet\Advertising\CampaignStrings {
 		$json = json_encode($data);
 		$options = ['http' => ['header' => "Content-type: text/plain; charset=UTF-8\r\n", 'method' => 'POST', 'content' => $json]];
 		$context = stream_context_create($options);
-		$result = file_get_contents($this->url, false /* use include path */, $context);
+		$result = @file_get_contents($this->url, false /* use include path */, $context);
 		$data = json_decode($result, true /* assoc */);
 		if (isset($data['error_code']))
 			throw new \ErrorException('Request failed: ' . $data['error_str'] . ': ' . $data['error_detail'], null, null, __FILE__, __LINE__);
