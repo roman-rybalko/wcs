@@ -35,7 +35,10 @@ class Pdo implements \WebConstructionSet\Database\Relational {
 		$values = array_merge(array_values($what), $this->where2values($where));
 		$stm = $this->pdo->prepare($query);
 		$stm->execute($values);
-		return $this->pdo->query('SELECT ROW_COUNT() AS count')->fetchAll()[0]['count'];
+		$count = $this->pdo->query('SELECT ROW_COUNT() AS count')->fetchAll()[0]['count'];
+		if ($count < 0)
+			error_log(new \ErrorException('Bad Query: ' . $query, null, null, __FILE__, __LINE__));
+		return $count < 0 ? 0 : $count;
 	}
 
 	public function insert($tableName, $what) {
@@ -45,6 +48,8 @@ class Pdo implements \WebConstructionSet\Database\Relational {
 		$stm = $this->pdo->prepare($query);
 		$stm->execute(array_values($what));
 		$count = $this->pdo->query('SELECT ROW_COUNT() AS count')->fetchAll()[0]['count'];
+		if ($count < 0)
+			error_log(new \ErrorException('Bad Query: ' . $query, null, null, __FILE__, __LINE__));
 		$id = $this->pdo->query('SELECT LAST_INSERT_ID() AS id')->fetchAll()[0]['id'];
 		if ($count > 0)
 			if ($id)
@@ -59,7 +64,10 @@ class Pdo implements \WebConstructionSet\Database\Relational {
 		$query = 'DELETE FROM ' . $tableName . ' WHERE ' . implode(' AND ', $this->where2sql($where));
 		$stm = $this->pdo->prepare($query);
 		$stm->execute($this->where2values($where));
-		return $this->pdo->query('SELECT ROW_COUNT() AS count')->fetchAll()[0]['count'];
+		$count = $this->pdo->query('SELECT ROW_COUNT() AS count')->fetchAll()[0]['count'];
+		if ($count < 0)
+			error_log(new \ErrorException('Bad Query: ' . $query, null, null, __FILE__, __LINE__));
+		return $count < 0 ? 0 : $count;
 	}
 
 	private function where2sql($where) {
