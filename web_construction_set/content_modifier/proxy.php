@@ -45,7 +45,7 @@ class Proxy {
 			$options['http']['method'] = 'GET';
 		}
 		$context = stream_context_create($options);
-		$stream = fopen($url, 'r', false, $context);
+		$stream = @fopen($url, 'r', false, $context);
 		if (!$stream)
 			throw new \ErrorException("Resource $url is not found", null, null, __FILE__, __LINE__);
 		$data = stream_get_meta_data($stream);
