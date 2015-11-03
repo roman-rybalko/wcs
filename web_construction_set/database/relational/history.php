@@ -8,42 +8,39 @@ namespace WebConstructionSet\Database\Relational;
  * Хранилище событий
  */
 class History {
-	private $db, $table;
+	private $table;
 	const MAX_DATA_SIZE = 1024;
 
-	public function __construct(\WebConstructionSet\Database\Relational $db, $table = 'history') {
-		$this->db = $db;
-		$this->table = $table;
+	public function __construct(\WebConstructionSet\Database\Relational $db, $key = null, $tableName = 'history') {
+		$fields = [];
+		if ($key !== null)
+			$fields['user_key'] = $key;
+		$this->table = new \WebConstructionSet\Database\Relational\TableWrapper($db, $tableName, $fields);
 	}
 
 	/**
 	 * Добавить событие
 	 * @param string $name
 	 * @param mixed $data
-	 * @param integer $key
 	 * @return boolean
 	 */
-	public function add($name, $data, $key = 0) {
+	public function add($name, $data) {
 		$data = json_encode($data);
 		if (strlen($data) > History::MAX_DATA_SIZE)
 			return false;
-		return $this->db->insert($this->table, ['name' => $name, 'data' => $data, 'time' => time(), 'user_key' => $key]);
+		return $this->table->insert(['name' => $name, 'data' => $data, 'time' => time()]);
 	}
 
 	/**
 	 * Получить набор событий
-	 * @param integer|null $key null - все события
 	 * @return [][name => string, time => integer, data => mixed, key => integer]
 	 */
-	public function get($key = 0) {
-		$filter = [];
-		if ($key !== null)
-			$filter['user_key'] = $key;
-		$data = $this->db->select($this->table, ['name', 'data', 'time', 'user_key'], $filter);
+	public function get() {
+		$data = $this->table->select(['name', 'data', 'time', 'user_key']);
 		$history = [];
 		foreach ($data as $event)
 			$history[] = ['name' => $event['name'], 'time' => $event['time'],
-				'data' => json_decode($event['data'], true), 'key' => $event['user_key']];
+				'data' => json_decode($event['data'], true /* assoc */), 'key' => $event['user_key']];
 		return $history;
 	}
 
@@ -53,6 +50,6 @@ class History {
 	 * @return integer Количество удаленных
 	 */
 	public function clear($time) {
-		return $this->db->delete($this->table, ['time' => $this->db->predicate('less', $time)]);
+		return $this->table->delete(['time' => $this->table->predicate('less', $time)]);
 	}
 }

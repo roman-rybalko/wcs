@@ -7,101 +7,101 @@ namespace WebConstructionSet\Database\Relational;
  * Периодическое выполнение задач
  */
 class Anacron {
-	private $db, $table;
+	private $table;
 	const MAX_DATA_SIZE = 1024;
 
-	public function __construct(\WebConstructionSet\Database\Relational $db, $table = 'anacron') {
-		$this->db = $db;
-		$this->table = $table;
+	public function __construct(\WebConstructionSet\Database\Relational $db, $key = null, $tableName = 'anacron') {
+		$fields = [];
+		if ($key !== null)
+			$fields['user_key'] = $key;
+		$this->table = new \WebConstructionSet\Database\Relational\TableWrapper($db, $tableName, $fields);
 	}
 
 	/**
 	 * Создать задачу
-	 * @param [start => integer, period => integer, data => mixed] $task start: Unix timestamp, period: seconds
-	 * @param integer $taskKey
-	 * @return integer taskId
+	 * @param integer $start Unix timestamp
+	 * @param integer $period seconds
+	 * @param mixed $data
+	 * @return integer id
 	 */
-	public function create($task, $taskKey = 0) {
-		$data = json_encode($task['data']);
+	public function create($start, $period, $data) {
+		$data = json_encode($data);
 		if (strlen($data) > Anacron::MAX_DATA_SIZE)
 			return 0;
-		return $this->db->insert($this->table, ['start_time' => $task['start'], 'period_time' => $task['period'], 'data' => $data, 'user_key' => $taskKey]);
+		return $this->table->insert(['start_time' => $start, 'period_time' => $period, 'data' => $data]);
 	}
 
 	/**
 	 * Получить список задач, готовых к выполнению
-	 * @param integer $taskKey null - all tasks
-	 * @return [][id => integer, data => mixed, key => integer]
+	 * @return [integer]
 	 */
-	public function ready($taskKey = 0) {
-		$filter = ['start_time' => $this->db->predicate('less_eq', time())];
-		if ($taskKey !== null)
-			$filter['user_key'] = $taskKey;
-		$data = $this->db->select($this->table, ['id', 'start_time', 'period_time', 'data', 'user_key'], $filter);
-		$tasks = [];
-		foreach ($data as $task) {
-			$time = $task['start_time'];
+	public function ready() {
+		$filter = ['start_time' => $this->table->predicate('less_eq', time())];
+		$data = $this->table->select(['id', 'start_time', 'period_time'], ['start_time' => $this->table->predicate('less_eq', time())]);
+		$ids = [];
+		foreach ($data as $data1) {
+			$time = $data1['start_time'];
 			while ($time <= time())
-				$time += $task['period_time'];
-			if ($this->db->update($this->table, ['start_time' => $time], ['id' => $task['id'], 'start_time' => $task['start_time']]))
-				$tasks[] = ['id' => $task['id'], 'data' => json_decode($task['data'], true /* assoc */), 'key' => $task['user_key']];
+				$time += $data1['period_time'];
+			if ($this->table->update(['start_time' => $time], ['id' => $data1['id'], 'start_time' => $data1['start_time']]))
+				$ids[] = $data1['id'];
 		}
-		return $tasks;
+		return $ids;
 	}
 
 	/**
 	 * Получить список зарегистрированных задач
-	 * @param [integer] $taskIds
-	 * @param integer $taskKey null - all tasks
+	 * @param [integer] $ids
 	 * @return [][id => integer, start => integer, period => integer, data => mixed, key => integer]
 	 */
-	public function get($taskIds = null, $taskKey = 0) {
-		$filter = [];
-		if ($taskKey !== null)
-			$filter['user_key'] = $taskKey;
+	public function get($ids = null) {
+		$fields = ['id', 'start_time', 'period_time', 'data', 'user_key'];
 		$data = [];
-		if ($taskIds !== null)
-			foreach ($taskIds as $taskId) {
-				$task = $this->db->select($this->table, ['id', 'start_time', 'period_time', 'data', 'user_key'], array_merge($filter, ['id' => $taskId]));
-				if ($task)
-					$data = array_merge($data, $task);
+		if ($ids !== null)
+			foreach ($ids as $taskId) {
+				$data1 = $this->table->select($fields, ['id' => $taskId]);
+				if ($data1)
+					$data = array_merge($data, $data1);
 			}
 		else
-			$data = $this->db->select($this->table, ['id', 'start_time', 'period_time', 'data', 'user_key'], $filter);
+			$data = $this->table->select($fields);
 		$tasks = [];
-		foreach ($data as $task)
-			$tasks[] = ['id' => $task['id'], 'start' => $task['start_time'], 'period' => $task['period_time'],
-				'data' => json_decode($task['data'], true /* assoc */), 'key' => $task['user_key']];
+		foreach ($data as $data1)
+			$tasks[] = ['id' => $data1['id'], 'start' => $data1['start_time'], 'period' => $data1['period_time'],
+				'data' => json_decode($data1['data'], true /* assoc */), 'key' => $data1['user_key']];
 		return $tasks;
 	}
 
 	/**
 	 * Обновить задачу
-	 * @param integer $taskId
-	 * @param [start => integer, period => integer, data => mixed] $task start: Unix timestamp, optional, period: seconds, optional, data: optional
-	 * @param integer $taskKey
+	 * @param integer $id
+	 * @param integer|null $start Unix timestamp
+	 * @param integer|null $period seconds
+	 * @param mixed|null $fields
 	 * @return boolean
 	 */
-	public function update($taskId, $task, $taskKey = 0) {
-		$data = [];
-		foreach (['start' => 'start_time', 'period' => 'period_time', 'data' => 'data'] as $param => $field)
-			if (isset($task[$param]))
-				$data[$field] = $task[$param];
-		if (isset($data['data'])) {
-			$data['data'] = json_encode($data['data']);
-			if (strlen($data['data']) > Anacron::MAX_DATA_SIZE)
-				return 0;
+	public function update($id, $start = null, $period = null, $data = null) {
+		$fields = [];
+		if ($start !== null)
+			$fields['start_time'] = $start;
+		if ($period !== null)
+			$fields['period_time'] = $period;
+		if ($data !== null) {
+			$fields['data'] = json_encode($data);
+			if (strlen($fields['data']) > Anacron::MAX_DATA_SIZE)
+				return false;
 		}
-		return $this->db->update($this->table, $data, ['id' => $taskId, 'user_key' => $taskKey]);
+		if (!$fields)
+			return false;
+		return $this->table->update($fields, ['id' => $id]);
 	}
 
 	/**
 	 * Удалить задачу
-	 * @param integer $taskId
-	 * @param integer $taskKey
+	 * @param integer $id
 	 * @return boolean
 	 */
-	public function delete($taskId, $taskKey = 0) {
-		return $this->db->delete($this->table, ['id' => $taskId, 'user_key' => $taskKey]);
+	public function delete($id) {
+		return $this->table->delete(['id' => $id]);
 	}
 }
