@@ -33,10 +33,11 @@ class History {
 
 	/**
 	 * Получить набор событий
+	 * @param integer $time Unix Time, с какого времени вернуть данные, по-умолчанию 0 т.е. все данные
 	 * @return [][name => string, time => integer, data => mixed, key => integer]
 	 */
-	public function get() {
-		$data = $this->table->select(['name', 'data', 'time', 'user_key']);
+	public function get($time = 0) {
+		$data = $this->table->select(['name', 'data', 'time', 'user_key'], ['time' => $this->table->predicate('ge', $time)]);
 		$history = [];
 		foreach ($data as $event)
 			$history[] = ['name' => $event['name'], 'time' => $event['time'],
