@@ -1,0 +1,69 @@
+<html>
+<head>
+<meta charset="utf8">
+</head>
+<body>
+<FORM ACTION="https://test.paysecure.ru/pay/order.cfm" METHOD="POST">
+<INPUT TYPE="HIDDEN" NAME="Merchant_ID" VALUE="123">
+<INPUT TYPE="HIDDEN" NAME="OrderNumber" VALUE="test">
+<INPUT TYPE="HIDDEN" NAME="OrderAmount" VALUE="1">
+<INPUT TYPE="HIDDEN" NAME="OrderCurrency" VALUE="RUB">
+<INPUT TYPE="SUBMIT" NAME="Submit" VALUE="Order">
+<input type="hidden" name="Language" value="EN">
+<input type="hidden" name="URL_RETURN" value="http://ZZZZ.ZZZ/ZZZ/">
+</FORM>
+<FORM ACTION="https://test.paysecure.ru/pay/order.cfm" METHOD="POST">
+<INPUT TYPE="HIDDEN" NAME="Merchant_ID" VALUE="123">
+<INPUT TYPE="HIDDEN" NAME="OrderNumber" VALUE="test">
+<INPUT TYPE="HIDDEN" NAME="OrderAmount" VALUE="1">
+<INPUT TYPE="SUBMIT" NAME="Submit" VALUE="Recurrig Order">
+<input type="hidden" name="Language" value="EN">
+<input type="hidden" name="URL_RETURN" value="http://ZZZZ.ZZZ/ZZZ/">
+<input type="hidden" name="RecurringIndicator" value="1">
+<input type="hidden" name="RecurringMinAmount" value="1">
+<input type="hidden" name="RecurringMaxAmount" value="5000">
+<input type="hidden" name="RecurringPeriod" value="1">
+<input type="hidden" name="RecurringMaxDate" value="31.12.2017">
+</FORM>
+<FORM ACTION="https://test.paysecure.ru/orderstate/orderstate.cfm" METHOD="POST">
+<INPUT TYPE="text" NAME="Ordernumber" VALUE="" placeholder="Ordernumber">
+<INPUT TYPE="HIDDEN" NAME="Merchant_ID" VALUE="123">
+<INPUT TYPE="HIDDEN" NAME="Login" VALUE="XXX">
+<INPUT TYPE="HIDDEN" NAME="Password" VALUE="YYYY">
+<INPUT TYPE="HIDDEN" NAME="Format" VALUE="3">
+<INPUT TYPE="SUBMIT" NAME="Submit" VALUE="Order State">
+</FORM>
+<FORM ACTION="https://test.paysecure.ru/cancel/cancel.cfm" method="POST">
+<INPUT TYPE="text" NAME="BillNumber" VALUE="" placeholder="BillNumber">
+<INPUT TYPE="hidden" NAME="Merchant_ID" VALUE="123">
+<INPUT TYPE="hidden" NAME="Login" VALUE="XXX">
+<INPUT TYPE="hidden" NAME="Password" VALUE="YYYY">
+<INPUT TYPE="text" NAME="Amount" placeholder="Amount" value="1">
+<INPUT TYPE="text" NAME="Currency" placeholder="Currency" value="RUB">
+<INPUT TYPE="hidden" NAME="Language" VALUE="EN">
+<INPUT TYPE="hidden" NAME="Format" VALUE="3">
+<INPUT TYPE="Submit" value="Refund">
+</FORM>
+<FORM ACTION="https://test.paysecure.ru/recurrent/rp.cfm" METHOD="POST">
+<INPUT TYPE="text" NAME="BillNumber" VALUE="" placeholder="BillNumber">
+<INPUT TYPE="HIDDEN" NAME="OrderNumber" VALUE="test">
+<INPUT TYPE="HIDDEN" NAME="Merchant_ID" VALUE="123">
+<INPUT TYPE="HIDDEN" NAME="Login" VALUE="XXX">
+<INPUT TYPE="HIDDEN" NAME="Password" VALUE="YYYY">
+<INPUT TYPE="text" NAME="Amount" VALUE="20" placeholder="Amount">
+<INPUT TYPE="text" NAME="Currency" VALUE="RUB" placeholder="Currency">
+<INPUT TYPE="HIDDEN" NAME="Format" VALUE="3">
+<INPUT TYPE="HIDDEN" NAME="Language" VALUE="EN">
+<INPUT TYPE="SUBMIT" NAME="Submit" VALUE="Recurring">
+</FORM>
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script>
+$('input[name="URL_RETURN"]').val(location.href);
+var date = new Date();
+$('input[name="OrderNumber"]').val('test' + date.getTime());
+$('input[name="OrderAmount"]').val(Math.round(Math.random() * 10000) / 100);
+$('input[name="RecurringMaxDate"]').val(date.getDate() + '.' + (date.getMonth() + 1) + '.' + (date.getFullYear() + 2));
+</script>
+<script src="config.js"></script>
+</body>
+</html>

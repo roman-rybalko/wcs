@@ -84,3 +84,6 @@ Name -> name, CamelCase -> camel_case, Name1Name2Name3 -> name1_name2_name3.
 
 ## Billing\Paypal
 PayPal Express Checkout
+
+## Billing\Assist
+ASSIST (www.assist.ru) processing
