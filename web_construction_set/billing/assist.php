@@ -45,19 +45,19 @@ class Assist {
 
 	/**
 	 * @param string $orderNumber
-	 * @param double $orderAmount
-	 * @param string $orderCurrency
+	 * @param double $amount
+	 * @param string $currency
 	 * @param boolean $subscription recurring payments
 	 * @param [key => value] $addParams
 	 * @return integer|null Transaction ID
 	 */
-	public function initiateTransaction($orderNumber, $orderAmount, $orderCurrency, $subscription = false, $addParams = []) {
-		$transaction = ['time' => time(), 'order_number' => $orderNumber, 'order_amount' => $orderAmount, 'order_currency' => $orderCurrency];
+	public function initiateTransaction($orderNumber, $amount, $currency, $subscription = false, $addParams = []) {
+		$transaction = ['time' => time(), 'order_number' => $orderNumber, 'amount' => $amount, 'currency' => $currency];
 		$params = [
 			'Merchant_ID' => $this->merchantId,
 			'OrderNumber' => $orderNumber,
-			'OrderAmount' => $orderAmount,
-			'OrderCurrency' => $orderCurrency,
+			'OrderAmount' => $amount,
+			'OrderCurrency' => $currency,
 			'URL_RETURN' => \WebConstructionSet\Url\Tools::getMyUrl(),
 		];
 		if ($subscription) {
@@ -127,11 +127,11 @@ class Assist {
 
 	/**
 	 * @param [integer]|null $ids
-	 * @return [][id => integer, key => integer, time => integer, order_number => integer, order_amount => double,
-	 *  order_currency => string, recurring => boolean, bill_number => integer, url => string]
+	 * @return [][id => integer, key => integer, time => integer, order_number => integer, amount => double,
+	 *  currency => string, recurring => boolean, bill_number => integer, url => string]
 	 */
 	public function getTransactions($ids = null) {
-		$fields = ['id', 'user_key', 'time', 'order_number', 'order_amount', 'order_currency', 'recurring', 'url', 'bill_number'];
+		$fields = ['id', 'user_key', 'time', 'order_number', 'amount', 'currency', 'recurring', 'url', 'bill_number'];
 		if ($ids === null) {
 			$data = $this->transactions->select($fields);
 		} else {
@@ -151,10 +151,10 @@ class Assist {
 
 	/**
 	 * @param integer $id Transaction ID
-	 * @return [order_number => integer, bill_number => integer, order_amount => double, order_currency => string, data => string] | null
+	 * @return [order_number => integer, bill_number => integer, amount => double, currency => string, data => string] | null
 	 */
 	public function processTransaction($id) {
-		if ($data = $this->transactions->select(['order_number', 'order_amount', 'order_currency', 'recurring', 'bill_number'], ['id' => $id])) {
+		if ($data = $this->transactions->select(['order_number', 'amount', 'currency', 'recurring', 'bill_number'], ['id' => $id])) {
 			$transaction = $data[0];
 			$params = [
 				'Merchant_ID' => $this->merchantId,
@@ -169,7 +169,7 @@ class Assist {
 			if (!isset($result['order'])) {
 				$this->transactions->delete(['id' => $id]);
 				return ['order_number' => $transaction['order_number'], 'bill_number' => $transaction['bill_number'],
-					'order_amount' => '', 'order_currency' => '',
+					'amount' => '', 'currency' => '',
 					'data' => 'Order Number: ' . $transaction['order_number'] . ', Bill Number: ' . $transaction['bill_number']
 						. ', First Code: ' . $result['@attributes']['firstcode'] . ', Second Code: ' . $result['@attributes']['secondcode']
 				];
@@ -182,14 +182,14 @@ class Assist {
 				error_log(new \ErrorException('checkvalue mismatch, computed: ' . $checkvalue . ', actual: ' . $order['checkvalue'] . ', result: ' . json_encode($result), null, null, __FILE__, __LINE__));
 				return null;
 			}
-			if ($transaction['order_amount'] != $order['orderamount'] || $transaction['order_currency'] != $order['ordercurrency']) {
+			if ($transaction['amount'] != $order['orderamount'] || $transaction['currency'] != $order['ordercurrency']) {
 				error_log(new \ErrorException('Transaction data mismatch, transaction: ' . json_encode($transaction) . ', order: ' . json_encode($order)));
 				$this->refund($order['billnumber']);
-				return ['order_number' => $order['ordernumber'], 'bill_number' => '',
-					'order_amount' => '', 'order_currency' => '',
+				return ['order_number' => $order['ordernumber'], 'bill_number' => $order['billnumber'],
+					'amount' => '', 'currency' => '',
 					'data' => 'Transaction data mismatch, Order Number: ' . $order['ordernumber'] . ', Bill Number: ' . $order['billnumber']
-						. ', Transaction Amount: ' . $transaction['order_amount'] . ', Order Amount: ' . $order['orderamount']
-						. ', Transaction Currency: ' . $transaction['order_currency'] . ', Order Currency: ' . $order['ordercurrency']
+						. ', Transaction Amount: ' . $transaction['amount'] . ', Order Amount: ' . $order['orderamount']
+						. ', Transaction Currency: ' . $transaction['currency'] . ', Order Currency: ' . $order['ordercurrency']
 				];
 			}
 			switch ($order['orderstate']) {
@@ -197,7 +197,7 @@ class Assist {
 					return null;
 				case 'Approved':
 					$ret = ['order_number' => $order['ordernumber'], 'bill_number' => $order['billnumber'],
-						'order_amount' => $order['orderamount'], 'order_currency' => $order['ordercurrency'],
+						'amount' => $order['orderamount'], 'currency' => $order['ordercurrency'],
 						'data' => 'Order Number: ' . $order['ordernumber'] . ', Bill Number: ' . $order['billnumber']];
 					if ($transaction['recurring'])
 						if ($subscriptionId = $this->subscriptions->insert(['time' => time(), 'bill_number' => $order['billnumber']]))
@@ -207,8 +207,8 @@ class Assist {
 					break;
 				default:
 					if ($this->transactions->delete(['id' => $id]))
-						return ['order_number' => $order['ordernumber'], 'bill_number' => '',
-							'order_amount' => '', 'order_currency' => '',
+						return ['order_number' => $order['ordernumber'], 'bill_number' => $order['billnumber'],
+							'amount' => '', 'currency' => '',
 							'data' => 'Order Number: ' . $order['ordernumber'] . ', Bill Number: ' . $order['billnumber']
 								. ', Order State: ' . $order['orderstate']];
 					break;
@@ -256,12 +256,12 @@ class Assist {
 	/**
 	 * @param integer $id Subscription ID
 	 * @param string $orderNumber
-	 * @param double $orderAmount
-	 * @param string $orderCurrency
+	 * @param double $amount
+	 * @param string $currency
 	 * @param [key => value] $addParams
-	 * @return [order_number => integer, bill_number => integer, order_amount => double, order_currency => string, data => string] | null
+	 * @return [order_number => integer, bill_number => integer, amount => double, currency => string, data => string] | null
 	 */
-	public function processSubscription($id, $orderNumber, $orderAmount, $orderCurrency, $addParams = []) {
+	public function processSubscription($id, $orderNumber, $amount, $currency, $addParams = []) {
 		if ($data = $this->subscriptions->select(['bill_number'], ['id' => $id])) {
 			$subscription = $data[0];
 			$params = [
@@ -270,8 +270,8 @@ class Assist {
 				'Merchant_ID' => $this->merchantId,
 				'Login' => $this->login,
 				'Password' => $this->password,
-				'Amount' => $orderAmount,
-				'Currency' => $orderCurrency,
+				'Amount' => $amount,
+				'Currency' => $currency,
 				'Format' => 3,  /// 1 - CSV, 2 - WDDX, 3 - XML, 4 - SOAP
 			];
 			$params = array_merge($params, $addParams);
@@ -280,7 +280,7 @@ class Assist {
 				return null;
 			if (!isset($result['orders']) || !isset($result['orders']['order']))
 				return ['order_number' => $orderNumber, 'bill_number' => '',
-					'order_amount' => '', 'order_currency' => '',
+					'amount' => '', 'currency' => '',
 					'data' => 'Order Number: ' . $orderNumber
 						. ', First Code: ' . $result['@attributes']['firstcode'] . ', Second Code: ' . $result['@attributes']['secondcode']
 				];
@@ -288,11 +288,11 @@ class Assist {
 			switch ($order['orderstate']) {
 				case 'Approved':
 					return ['order_number' => $order['ordernumber'], 'bill_number' => $order['billnumber'],
-						'order_amount' => $order['orderamount'], 'order_currency' => $order['ordercurrency'],
+						'amount' => $order['amount'], 'currency' => $order['currency'],
 						'data' => 'Order Number: ' . $order['ordernumber'] . ', Bill Number: ' . $order['billnumber']];
 				default:
-					return ['order_number' => $order['ordernumber'], 'bill_number' => '',
-						'order_amount' => '', 'order_currency' => '',
+					return ['order_number' => $order['ordernumber'], 'bill_number' => $order['billnumber'],
+						'amount' => '', 'currency' => '',
 						'data' => 'Order Number: ' . $order['ordernumber'] . ', Bill Number: ' . $order['billnumber']
 							. ', Order State: ' . $order['orderstate']];
 			}
@@ -311,11 +311,11 @@ class Assist {
 	/**
 	 * @param integer $billNumber
 	 * @param [key => value] $addParams
-	 * @return [order_number => integer, bill_number => integer, order_amount => double, order_currency => string, data => string] | null
+	 * @return [order_number => integer, bill_number => integer, amount => double, currency => string, data => string] | null
 	 */
 	public function refund($billNumber, $addParams = []) {
 		$params = [
-			'Billnumber' => $billNumber,
+			'BillNumber' => $billNumber,
 			'Merchant_ID' => $this->merchantId,
 			'Login' => $this->login,
 			'Password' => $this->password,
@@ -327,13 +327,13 @@ class Assist {
 			return null;
 		if (!isset($result['orders']) || !isset($result['orders']['order']))
 			return ['order_number' => '', 'bill_number' => $billNumber,
-				'order_amount' => '', 'order_currency' => '',
+				'amount' => '', 'currency' => '',
 				'data' => 'Bill Number: ' . $billNumber
 					. ', First Code: ' . $result['@attributes']['firstcode'] . ', Second Code: ' . $result['@attributes']['secondcode']
 			];
 		$order = $result['orders']['order'];
 		return ['order_number' => $order['ordernumber'], 'bill_number' => $order['billnumber'],
-			'order_amount' => $order['orderamount'], 'order_currency' => $order['ordercurrency'],
+			'amount' => $order['amount'], 'currency' => $order['currency'],
 			'data' => 'Order Number: ' . $order['ordernumber'] . ', Bill Number: ' . $order['billnumber']
 				. ', Order State: ' . $order['orderstate']];
 	}
@@ -401,13 +401,19 @@ class Assist {
 		if (isset($params['Password']))
 			$params['Password'] = 'XXXXXXX';
 		$fields = ['time' => time(), 'data' => json_encode($params)];
-		foreach (['order_number' => 'OrderNumber', 'bill_number' => 'BillNumber'] as $dst => $src)
+		foreach (['OrderNumber' => 'order_number', 'BillNumber' => 'bill_number'] as $src => $dst)
 			if (isset($params[$src]))
 				$fields[$dst] = $params[$src];
-		if (isset($params['_result']) && isset($params['_result']['order']))
-			foreach (['order_number' => 'ordernumber', 'bill_number' => 'billnumber'] as $dst => $src)
-				if (isset($params['_result']['order'][$src]))
-					$fields[$dst] = $params['_result']['order'][$src];
+		if (isset($params['_result'])) {
+			if (isset($params['_result']['order']))
+				$order = $params['_result']['order'];
+			if (isset($params['_result']['orders']) && isset($params['_result']['orders']['order']))
+				$order = $params['_result']['orders']['order'];
+		}
+		if (isset($order))
+			foreach (['ordernumber' => 'order_number', 'billnumber' => 'bill_number'] as $src => $dst)
+				if (isset($order[$src]))
+					$fields[$dst] = $order[$src];
 		if (!$this->log->insert($fields))
 			error_log(new \ErrorException('Log insert failed', null, null, __FILE__, __LINE__));
 	}

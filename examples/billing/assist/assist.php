@@ -20,14 +20,14 @@ if (isset($_POST['init'])) {
 		'Language' => 'EN',
 		'OrderComment' => 'Sample Order',
 	];
-	dump($a->initiateTransaction('test' . time(), $_POST['OrderAmount'], $_POST['OrderCurrency'], isset($_POST['subscription']), $params));
+	dump($a->initiateTransaction('test' . time(), $_POST['amount'], $_POST['currency'], isset($_POST['subscription']), $params));
 }
 ?>
 <form method="post">
-<input type="text" name="OrderAmount" placeholder="OrderAmount" value="100"><br>
-<input type="text" name="OrderCurrency" placeholder="OrderCurrency" value="RUB"><br>
-<label><input type="checkbox" name="subscription">Subscription</label><br>
-<input type="submit" name="init" value="Init"><br>
+<input type="text" name="amount" placeholder="amount" value="100">
+<input type="text" name="currency" placeholder="currency" value="RUB">
+<label><input type="checkbox" name="subscription">Subscription</label>
+<input type="submit" name="init" value="Init">
 </form>
 <h3>Process:</h3>
 <?php
@@ -35,8 +35,8 @@ if (isset($_POST['process']))
 	dump($a->processTransaction($_POST['id']));
 ?>
 <form method="post">
-<input type="text" name="id" placeholder="transaction id"><br>
-<input type="submit" name="process" value="Process"><br>
+<input type="text" name="id" placeholder="transaction id">
+<input type="submit" name="process" value="Process">
 </form>
 <h3>Cancel:</h3>
 <?php
@@ -44,8 +44,8 @@ if (isset($_POST['cancel']))
 	dump($a->cancelTransaction($_POST['id']));
 ?>
 <form method="post">
-<input type="text" name="id" placeholder="transaction id"><br>
-<input type="submit" name="cancel" value="Cancel"><br>
+<input type="text" name="id" placeholder="transaction id">
+<input type="submit" name="cancel" value="Cancel">
 </form>
 <h3>Transactions:</h3>
 <?php dump($a->getTransactions()); ?>
@@ -56,14 +56,14 @@ if (isset($_POST['process_subscription'])) {
 		'Language' => 'EN',
 		'OrderComment' => 'Sample Order',
 	];
-	dump($a->processSubscription($_POST['id'], 'test' . time(), $_POST['OrderAmount'], $_POST['OrderCurrency'], $params));
+	dump($a->processSubscription($_POST['id'], 'test' . time(), $_POST['amount'], $_POST['currency'], $params));
 }
 ?>
 <form method="post">
-<input type="text" name="id" placeholder="subscription id"><br>
-<input type="text" name="OrderAmount" placeholder="OrderAmount" value="101"><br>
-<input type="text" name="OrderCurrency" placeholder="OrderCurrency" value="RUB"><br>
-<input type="submit" name="process_subscription" value="Process subscription"><br>
+<input type="text" name="id" placeholder="subscription id">
+<input type="text" name="amount" placeholder="amount" value="101">
+<input type="text" name="currency" placeholder="currency" value="RUB">
+<input type="submit" name="process_subscription" value="Process subscription">
 </form>
 <h3>Cancel subscription:</h3>
 <?php
@@ -71,8 +71,8 @@ if (isset($_POST['cancel_subscription']))
 	dump($a->cancelSubscription($_POST['id']));
 ?>
 <form method="post">
-<input type="text" name="id" placeholder="subscription id"><br>
-<input type="submit" name="cancel_subscription" value="Cancel subscription"><br>
+<input type="text" name="id" placeholder="subscription id">
+<input type="submit" name="cancel_subscription" value="Cancel subscription">
 </form>
 <h3>Subscriptions:</h3>
 <?php dump($a->getSubscriptions()); ?>
@@ -82,12 +82,18 @@ if (isset($_POST['refund'])) {
 	$params = [
 		'Language' => 'EN',
 	];
+	if (isset($_POST['amount']) && $_POST['amount']) {
+		$params['Amount'] = $_POST['amount'];
+		$params['Currency'] = isset($_POST['currency']) && $_POST['currency'] ? $_POST['currency'] : 'RUB';
+	}
 	dump($a->refund($_POST['BillNumber'], $params));
 }
 ?>
 <form method="post">
-<input type="text" name="BillNumber" placeholder="BillNumber"><br>
-<input type="submit" name="refund" value="Refund"><br>
+<input type="text" name="BillNumber" placeholder="BillNumber">
+<input type="text" name="amount" placeholder="amount">
+<input type="text" name="currency" placeholder="currency">
+<input type="submit" name="refund" value="Refund">
 </form>
 <h3>Log:</h3>
 <?php
