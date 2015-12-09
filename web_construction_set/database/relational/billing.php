@@ -141,6 +141,6 @@ class Billing {
 	 * @return integer количество удаленных транзакций
 	 */
 	public function clear($time) {
-		return $this->db->delete(array_merge($this->tableFields, ['time' => $this->db->predicate('less_eq', $time)]));
+		return $this->db->delete($this->transactionsTable, array_merge($this->tableFields, ['time' => $this->db->predicate('less_eq', $time)]));
 	}
 }
