@@ -11,8 +11,8 @@ class TableWrapper {
 		$this->fields = $fields;
 	}
 
-	public function select($what = [], $where = []) {
-		return $this->db->select($this->table, $what, array_merge($this->fields, $where));
+	public function select($what = [], $where = [], $callback = null) {
+		return $this->db->select($this->table, $what, array_merge($this->fields, $where), $callback);
 	}
 
 	public function update($what, $where) {

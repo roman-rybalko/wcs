@@ -13,9 +13,10 @@ interface Relational {
 	 * @param string $tableName
 	 * @param [string] $what
 	 * @param [string => string] $where
-	 * @return [string => string] $what -> field => value
+	 * @param function([string => string]) $callback Если установлен, вызывается для каждой строки, возвращаемого значение тогда нет.
+	 * @return [][string => string] $what -> field => value
 	 */
-	public function select($tableName, $what = [], $where = []);
+	public function select($tableName, $what = [], $where = [], $callback = null);
 
 	/**
 	 * UPDATE

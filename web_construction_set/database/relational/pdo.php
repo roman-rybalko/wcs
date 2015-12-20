@@ -12,7 +12,7 @@ class Pdo implements \WebConstructionSet\Database\Relational {
 		$this->pdo = new \PDO($dsn, $user, $pass, [\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC]);
 	}
 
-	public function select($tableName, $what = [], $where = []) {
+	public function select($tableName, $what = [], $where = [], $callback = null) {
 		$query = 'SELECT';
 		if ($what)
 			$query .= ' ' . implode(', ', $what);
@@ -23,7 +23,11 @@ class Pdo implements \WebConstructionSet\Database\Relational {
 			$query .= ' WHERE ' . implode(' AND ', $this->where2sql($where));
 		$stm = $this->pdo->prepare($query);
 		$stm->execute($this->where2values($where));
-		return $stm->fetchAll();
+		if ($callback)
+			while ($row = $stm->fetch())
+				$callback($row);
+		else
+			return $stm->fetchAll();
 	}
 
 	public function update($tableName, $what, $where = []) {

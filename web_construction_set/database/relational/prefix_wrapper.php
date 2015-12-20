@@ -11,12 +11,12 @@ class PrefixWrapper implements \WebConstructionSet\Database {
 		$this->fieldPrefix = $fieldPrefix;
 	}
 
-	public function select($tableName, $what = [], $where = []) {
+	public function select($tableName, $what = [], $where = [], $callback = null) {
 		foreach ($what as &$key => $val)
 			$key = $this->fieldPrefix . $key;
 		foreach ($where as &$key => $val)
 			$key = $this->fieldPrefix . $key;
-		return $db->select($this->tablePrefix . $tableName, $what, $where);
+		return $db->select($this->tablePrefix . $tableName, $what, $where, $callback);
 	}
 
 	public function update($tableName, $what, $where) {

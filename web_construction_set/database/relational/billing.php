@@ -104,25 +104,13 @@ class Billing {
 	 * Список транзакций
 	 * @param [integer]|null $transactionIds
 	 * @param integer $time Unix Time, с какого времени вернуть данные
+	 * @param function([id => integer, time => integer, amount => double, amount_before => double, amount_after => double, data => mixed, key => integer]) $callback Функция,
+	 *  которая будет вызываться для каждой транзакции. Если задана, то возвращаемое значение getTransactions() будет пусто.
 	 * @return [][id => integer, time => integer, amount => double, amount_before => double, amount_after => double, data => mixed, key => integer]
 	 */
-	public function getTransactions($transactionIds = null, $time = 0) {
-		$data = [];
-		if ($transactionIds !== null) {
-			foreach ($transactionIds as $transactionId)
-				if ($transaction = $this->db->select($this->transactionsTable, ['id', 'time', 'amount', 'amount_before', 'amount_after', 'user_key', 'data'],
-					array_merge($this->tableFields, ['id' => $transactionId, 'time' => $this->db->predicate('greater_eq', $time)])))
-				{
-					$data = array_merge($data, $transaction);
-				}
-		} else {
-			$data = $this->db->select($this->transactionsTable, ['id', 'time', 'amount', 'amount_before', 'amount_after', 'user_key', 'data'],
-				array_merge($this->tableFields, ['time' => $this->db->predicate('greater_eq', $time)]));
-			if (!$data)
-				$data = [];
-		}
+	public function getTransactions($transactionIds = null, $time = 0, $callback = null) {
 		$transactions = [];
-		foreach ($data as $data1) {
+		$deepCallback = function ($data1) use (&$transactions, $callback) {
 			$transaction = [];
 			foreach (['id', 'time'] as $field)
 				$transaction[$field] = $data1[$field];
@@ -130,8 +118,17 @@ class Billing {
 				$transaction[$field] = $data1[$field] ? $data1[$field] / pow(10, $this->precision) : $data1[$field];
 			$transaction['key'] = $data1['user_key'];
 			$transaction['data'] = json_decode($data1['data'], true /* assoc */);
-			$transactions[] = $transaction;
-		}
+			if ($callback)
+				$callback($transaction);
+			else
+				$transactions[] = $transaction;
+		};
+		$fields = ['id', 'time', 'amount', 'amount_before', 'amount_after', 'user_key', 'data'];
+		if ($transactionIds !== null)
+			foreach ($transactionIds as $transactionId)
+				$this->db->select($this->transactionsTable, $fields, array_merge($this->tableFields, ['id' => $transactionId, 'time' => $this->db->predicate('greater_eq', $time)]), $deepCallback);
+		else
+			$this->db->select($this->transactionsTable, $fields, array_merge($this->tableFields, ['time' => $this->db->predicate('greater_eq', $time)]), $deepCallback);
 		return $transactions;
 	}
 
