@@ -53,24 +53,32 @@ class Tools {
 	}
 
 	/**
-	 * Нормализация url (убирает /../ /./)
+	 * Нормализация url (убирает /../ /./ //)
 	 * @param string $url
 	 * @return string URL
 	 */
 	public static function normalize($url) {
-		if (preg_match('~^\s*(\S*//[^\/]+)(/.+)$~', $url, $matches)) {
-			$segments = explode('/', $matches[2]);
-			$path = [];
-			foreach($segments as $segment){
-				if ($segment == '.')
-					continue;
-				if ($segment == '..')
-					array_pop($path);
-				else
-					array_push($path, $segment);
-			}
-			$url = $matches[1] . implode('/', $path);
+		$prefix = '';
+		if (preg_match('~^\s*(\S*?://)~', $url, $matches)) {
+			$prefix = $matches[1];
+			$url = preg_replace('~^\s*(\S*?://)~', '', $url);
+		} else if (preg_match('~^\s*(/)~', $url, $matches)) {
+			$prefix = $matches[1];
+			$url = preg_replace('~^\s*(/)~', '', $url);
 		}
+		$segments = explode('/', $url);
+		$path = [];
+		foreach($segments as $segment) {
+			if ($segment == '')
+				continue;
+			if ($segment == '.')
+				continue;
+			if ($segment == '..')
+				array_pop($path);
+			else
+				array_push($path, $segment);
+		}
+		$url = $prefix . implode('/', $path);
 		return $url;
 	}
 
