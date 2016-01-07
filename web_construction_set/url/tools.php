@@ -59,9 +59,9 @@ class Tools {
 	 */
 	public static function normalize($url) {
 		$prefix = '';
-		if (preg_match('~^\s*(\S*?://)~', $url, $matches)) {
+		if (preg_match('~^\s*((\S+:)?//)~', $url, $matches)) {
 			$prefix = $matches[1];
-			$url = preg_replace('~^\s*(\S*?://)~', '', $url);
+			$url = preg_replace('~^\s*((\S+:)?//)~', '', $url);
 		} else if (preg_match('~^\s*(/)~', $url, $matches)) {
 			$prefix = $matches[1];
 			$url = preg_replace('~^\s*(/)~', '', $url);
