@@ -9,7 +9,7 @@ namespace WebConstructionSet\Database\Relational;
  */
 class History {
 	private $table;
-	const MAX_DATA_SIZE = 1024;
+	const MAX_DATA_SIZE = 16384;
 
 	public function __construct(\WebConstructionSet\Database\Relational $db, $key = null, $tableName = 'history') {
 		$fields = [];
@@ -27,7 +27,7 @@ class History {
 	public function add($name, $data) {
 		$data = json_encode($data);
 		if (strlen($data) > History::MAX_DATA_SIZE)
-			return false;
+			throw new \ErrorException('User Data too large', null, null, __FILE__, __LINE__);
 		return $this->table->insert(['name' => $name, 'data' => $data, 'time' => time()]);
 	}
 
