@@ -329,13 +329,14 @@ class Paypal {
 	private function call($params) {
 		$options = [
 			'http' => [
-				'header' => "Content-type: application/x-www-form-urlencoded\r\n",
 				'method' => 'POST',
+				'protocol_version' => '1.1',
+				'header' => "Content-type: application/x-www-form-urlencoded\r\n",
 				'content' => http_build_query($params)
 			]
 		];
 		$context = stream_context_create($options);
-		$result = @file_get_contents($this->endpointUrl, false /* use include path */, $context);
+		$result = file_get_contents($this->endpointUrl, false /* use include path */, $context);
 		if (!$result)
 			return null;
 		$data = [];
